@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenya Transport Sector Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #0d47a1;
+            --accent-color: #2196f3;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --light-color: #f5f5f5;
+            --dark-color: #333;
+            --gray-color: #757575;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .last-updated {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        /* Transport Modes Navigation */
+        .transport-modes {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .mode-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--gray-color);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .mode-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .mode-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        /* Stats Cards */
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--dark-color);
+        }
+        
+        .card-unit {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+        }
+        
+        .card-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        
+        .trend-up {
+            color: var(--success-color);
+        }
+        
+        .trend-down {
+            color: var(--danger-color);
+        }
+        
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Details Section */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .details-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .details-list {
+            list-style: none;
+        }
+        
+        .details-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .details-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-label {
+            font-weight: 500;
+        }
+        
+        .item-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #43a047;
+        }
+        
+        .refresh-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-color);
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .transport-modes {
+                justify-content: center;
+            }
+            
+            .mode-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                padding: 15px;
+            }
+            
+            .chart-wrapper {
+                height: 250px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .refresh-controls {
+                justify-content: center;
+                margin-top: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-value {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-truck-moving"></i>
+                    </div>
+                    <div>
+                        <h1>Kenya Transport Sector Dashboard</h1>
+                        <p class="subtitle">Comprehensive Overview of Transport & Infrastructure Performance</p>
+                        <p class="last-updated">Last updated: <span id="lastUpdated">--:--:--</span></p>
+                    </div>
+                </div>
+                <div class="refresh-controls">
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i> Refresh Data
+                    </button>
+                    <button class="btn btn-success" onclick="exportData()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Transport Mode Selection -->
+        <div class="transport-modes">
+            <button class="mode-btn active" data-mode="overview" onclick="setActiveMode('overview')">
+                <i class="fas fa-tachometer-alt mode-icon"></i> Overview
+            </button>
+            <button class="mode-btn" data-mode="sea" onclick="setActiveMode('sea')">
+                <i class="fas fa-ship mode-icon"></i> Sea Transport (KPA)
+            </button>
+            <button class="mode-btn" data-mode="rail" onclick="setActiveMode('rail')">
+                <i class="fas fa-train mode-icon"></i> Railways (KRC)
+            </button>
+            <button class="mode-btn" data-mode="air" onclick="setActiveMode('air')">
+                <i class="fas fa-plane mode-icon"></i> Aviation (KAA/KCAA)
+            </button>
+            <button class="mode-btn" data-mode="road" onclick="setActiveMode('road')">
+                <i class="fas fa-truck mode-icon"></i> Road Transport (NTSA/KeNHA)
+            </button>
+            <button class="mode-btn" data-mode="pipeline" onclick="setActiveMode('pipeline')">
+                <i class="fas fa-oil-can mode-icon"></i> Pipeline (KPC)
+            </button>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboardContent">
+            <!-- Content will be loaded dynamically -->
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading dashboard data...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>Kenya Transport Sector Dashboard © 2024 | Data sourced from KPA, KRC, KAA, KCAA, NTSA, KeNHA, KPC</p>
+            <p>This dashboard provides real-time insights into Kenya's transport infrastructure performance</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentMode = 'overview';
+        let currentData = null;
+        let charts = {};
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOverviewData();
+            updateLastUpdated();
+        });
+
+        function setActiveMode(mode) {
+            currentMode = mode;
+            
+            // Update active button
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+            
+            // Load data for selected mode
+            switch(mode) {
+                case 'overview':
+                    loadOverviewData();
+                    break;
+                case 'sea':
+                    loadKPAData();
+                    break;
+                case 'rail':
+                    loadRailData();
+                    break;
+                case 'air':
+                    loadAirData();
+                    break;
+                case 'road':
+                    loadRoadData();
+                    break;
+                case 'pipeline':
+                    loadPipelineData();
+                    break;
+            }
+        }
+
+        async function loadOverviewData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/overview');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderOverviewDashboard();
+                } else {
+                    showError('Failed to load overview data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        async function loadKPAData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/kpa');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderKPADashboard();
+                } else {
+                    showError('Failed to load KPA data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        async function loadRailData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/rail');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderRailDashboard();
+                } else {
+                    showError('Failed to load rail data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        async function loadAirData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/air');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderAirDashboard();
+                } else {
+                    showError('Failed to load aviation data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        async function loadRoadData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/road');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderRoadDashboard();
+                } else {
+                    showError('Failed to load road data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        async function loadPipelineData() {
+            showLoading();
+            try {
+                const response = await fetch('/api/pipeline');
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentData = result.data;
+                    renderPipelineDashboard();
+                } else {
+                    showError('Failed to load pipeline data');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        }
+
+        function renderOverviewDashboard() {
+            const data = currentData;
+            
+            const html = `
+                <div class="dashboard-grid">
+                    <!-- Sea Transport Card -->
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Sea Transport</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-ship"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.sea.cargo_throughput.toFixed(1)}</div>
+                        <p class="card-unit">Million MT Cargo Throughput</p>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Container Traffic: ${data.sea.container_traffic.toFixed(2)}M TEUs</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Rail Transport Card -->
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Rail Transport</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-train"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${(data.rail.total_passengers).toFixed(1)}</div>
+                        <p class="card-unit">Million Passengers</p>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Cargo: ${data.rail.total_cargo.toFixed(1)}M MT</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Air Transport Card -->
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Air Transport</h3>
+                            <div class="card-icon" style="background: #9c27b0;">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.air.total_passengers.toFixed(1)}</div>
+                        <p class="card-unit">Million Passengers</p>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>Freight: ${data.air.total_freight}K MT</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Road Transport Card -->
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Road Transport</h3>
+                            <div class="card-icon" style="background: #ff9800;">
+                                <i class="fas fa-truck"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.road.total_vehicles.toFixed(1)}</div>
+                        <p class="card-unit">Million Registered Vehicles</p>
+                        <div class="card-trend trend-down">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Fatalities: ${data.road.road_fatalities.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Pipeline Card -->
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pipeline</h3>
+                            <div class="card-icon" style="background: #795548;">
+                                <i class="fas fa-oil-can"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.pipeline.throughput.toFixed(1)}</div>
+                        <p class="card-unit">Billion Litres Throughput</p>
+                        <div class="card-trend trend-up">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Uptime: ${data.pipeline.system_uptime}%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-secondary" onclick="loadOverviewData()">
+                        <i class="fas fa-redo"></i> Refresh Overview
+                    </button>
+                    <div class="refresh-controls">
+                        <button class="btn btn-primary" onclick="loadDetailedData()">
+                            <i class="fas fa-chart-bar"></i> Load Detailed Charts
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            updateLastUpdated();
+        }
+
+        function renderKPADashboard() {
+            const data = currentData;
+            
+            const html = `
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Cargo Throughput</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.summary.cargo_throughput.toFixed(1)}</div>
+                        <p class="card-unit">Million Metric Tons</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Container Traffic</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-box"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.summary.container_traffic.toFixed(2)}</div>
+                        <p class="card-unit">Million TEUs</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Vessel Turnaround</h3>
+                            <div class="card-icon" style="background: #ff9800;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.summary.vessel_turnaround}</div>
+                        <p class="card-unit">Days</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Container Dwell Time</h3>
+                            <div class="card-icon" style="background: #9c27b0;">
+                                <i class="fas fa-hourglass-half"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.summary.container_dwell_time}</div>
+                        <p class="card-unit">Days</p>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i> Monthly Trends
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="kpaTrendChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-map-marker-alt"></i> Port Performance
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="portPerformanceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="details-grid">
+                    <div class="details-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-info-circle"></i> Performance Metrics
+                        </h3>
+                        <ul class="details-list">
+                            <li class="details-item">
+                                <span class="item-label">Berth Productivity</span>
+                                <span class="item-value">${data.summary.berth_productivity} moves/hour</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Transit Traffic</span>
+                                <span class="item-value">${data.summary.transit_traffic}M MT</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Vessels Handled</span>
+                                <span class="item-value">${data.monthly_trend.reduce((sum, m) => sum + m.vessels, 0).toLocaleString()}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="details-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-anchor"></i> Port Details
+                        </h3>
+                        <ul class="details-list">
+                            ${data.ports.map(port => `
+                                <li class="details-item">
+                                    <span class="item-label">${port.name}</span>
+                                    <span class="item-value">${port.cargo}M MT / ${port.containers}M TEUs</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            renderKPAMonthlyTrendChart();
+            renderPortPerformanceChart();
+            updateLastUpdated();
+        }
+
+        // Similar render functions for other modes would follow...
+        // For brevity, I'll show the structure for one more mode:
+
+        function renderRailDashboard() {
+            const data = currentData;
+            
+            const html = `
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">SGR Passengers</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.sgr.passengers.toFixed(1)}</div>
+                        <p class="card-unit">Million Passengers</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">SGR Cargo</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.sgr.cargo.toFixed(1)}</div>
+                        <p class="card-unit">Million MT</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Revenue</h3>
+                            <div class="card-icon" style="background: #9c27b0;">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${(data.sgr.revenue + data.mgr.revenue).toFixed(1)}</div>
+                        <p class="card-unit">Billion KES</p>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">MGR Passengers</h3>
+                            <div class="card-icon" style="background: #ff9800;">
+                                <i class="fas fa-train"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${data.mgr.passengers.toFixed(1)}</div>
+                        <p class="card-unit">Million Passengers</p>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i> Monthly Passenger Trends
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="railPassengerChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-bar"></i> Monthly Cargo Trends
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="railCargoChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            renderRailCharts();
+            updateLastUpdated();
+        }
+
+        // Chart rendering functions
+        function renderKPAMonthlyTrendChart() {
+            const ctx = document.getElementById('kpaTrendChart').getContext('2d');
+            const data = currentData.monthly_trend;
+            
+            if (charts.kpaTrendChart) {
+                charts.kpaTrendChart.destroy();
+            }
+            
+            charts.kpaTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.month),
+                    datasets: [
+                        {
+                            label: 'Cargo (M MT)',
+                            data: data.map(d => d.cargo),
+                            borderColor: '#2196f3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Containers (K TEUs)',
+                            data: data.map(d => d.containers),
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPortPerformanceChart() {
+            const ctx = document.getElementById('portPerformanceChart').getContext('2d');
+            const data = currentData.ports;
+            
+            if (charts.portPerformanceChart) {
+                charts.portPerformanceChart.destroy();
+            }
+            
+            charts.portPerformanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.name),
+                    datasets: [
+                        {
+                            label: 'Cargo (M MT)',
+                            data: data.map(d => d.cargo),
+                            backgroundColor: '#2196f3',
+                            borderColor: '#1976d2',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Containers (M TEUs)',
+                            data: data.map(d => d.containers),
+                            backgroundColor: '#4caf50',
+                            borderColor: '#388e3c',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderRailCharts() {
+            const passengerCtx = document.getElementById('railPassengerChart').getContext('2d');
+            const cargoCtx = document.getElementById('railCargoChart').getContext('2d');
+            const data = currentData;
+            
+            // Destroy existing charts
+            if (charts.railPassengerChart) charts.railPassengerChart.destroy();
+            if (charts.railCargoChart) charts.railCargoChart.destroy();
+            
+            // Passenger Chart
+            charts.railPassengerChart = new Chart(passengerCtx, {
+                type: 'line',
+                data: {
+                    labels: data.monthly_passengers.map(d => d.month),
+                    datasets: [
+                        {
+                            label: 'SGR (K Passengers)',
+                            data: data.monthly_passengers.map(d => d.sgr),
+                            borderColor: '#4caf50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'MGR (K Passengers)',
+                            data: data.monthly_passengers.map(d => d.mgr),
+                            borderColor: '#ff9800',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+            
+            // Cargo Chart
+            charts.railCargoChart = new Chart(cargoCtx, {
+                type: 'bar',
+                data: {
+                    labels: data.monthly_cargo.map(d => d.month),
+                    datasets: [
+                        {
+                            label: 'SGR (K MT)',
+                            data: data.monthly_cargo.map(d => d.sgr),
+                            backgroundColor: '#2196f3',
+                            borderColor: '#1976d2',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'MGR (K MT)',
+                            data: data.monthly_cargo.map(d => d.mgr),
+                            backgroundColor: '#9c27b0',
+                            borderColor: '#7b1fa2',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Utility functions
+        function refreshData() {
+            switch(currentMode) {
+                case 'overview':
+                    loadOverviewData();
+                    break;
+                case 'sea':
+                    loadKPAData();
+                    break;
+                case 'rail':
+                    loadRailData();
+                    break;
+                case 'air':
+                    loadAirData();
+                    break;
+                case 'road':
+                    loadRoadData();
+                    break;
+                case 'pipeline':
+                    loadPipelineData();
+                    break;
+            }
+        }
+
+        async function exportData() {
+            let endpoint;
+            switch(currentMode) {
+                case 'overview':
+                    endpoint = '/api/export/kpa';
+                    break;
+                case 'sea':
+                    endpoint = '/api/export/kpa';
+                    break;
+                case 'rail':
+                    endpoint = '/api/export/rail';
+                    break;
+                case 'air':
+                    endpoint = '/api/export/air';
+                    break;
+                case 'road':
+                    endpoint = '/api/export/road';
+                    break;
+                case 'pipeline':
+                    endpoint = '/api/export/pipeline';
+                    break;
+            }
+            
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `transport-data-${currentMode}-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    
+                    alert('Data exported successfully!');
+                } else {
+                    alert('Failed to export data: ' + data.error);
+                }
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = 
+                now.toLocaleTimeString() + ' ' + now.toLocaleDateString();
+        }
+
+        function showLoading() {
+            document.getElementById('dashboardContent').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading ${currentMode} data...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.getElementById('dashboardContent').innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f44336; margin-bottom: 20px;"></i>
+                    <h3>Error Loading Data</h3>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="refreshData()" style="margin-top: 20px;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        function loadDetailedData() {
+            // This function would load more detailed data when needed
+            alert('Detailed data loading feature would be implemented here');
+        }
+    </script>
+</body>
+</html>
