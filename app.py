@@ -17,7 +17,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load pre-processed DataFrames from pickle file
-PICKLE_FILE = Path("data\\transport_tables_2019_2023.pkl")
+PICKLE_FILE = Path("data/transport_tables_2019_2023.pkl")
 
 try:
     with open(PICKLE_FILE, 'rb') as f:
