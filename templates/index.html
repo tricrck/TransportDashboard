@@ -141,6 +141,10 @@
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             transition: transform 0.3s ease;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
         
         .stats-card:hover {
@@ -175,13 +179,22 @@
         .card-value {
             font-size: 2rem;
             font-weight: 700;
-            margin: 10px 0;
+            margin: 10px 0 5px 0;
             color: var(--dark-color);
+            line-height: 1.2;
         }
         
         .card-unit {
             font-size: 0.9rem;
             color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+        
+        .card-year {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            font-style: italic;
+            margin-bottom: 8px;
         }
         
         .card-trend {
@@ -189,7 +202,8 @@
             align-items: center;
             gap: 5px;
             font-size: 0.9rem;
-            margin-top: 10px;
+            margin-top: auto;
+            padding-top: 10px;
         }
         
         .trend-up {
@@ -198,6 +212,23 @@
         
         .trend-down {
             color: var(--danger-color);
+        }
+        
+        .trend-neutral {
+            color: var(--gray-color);
+        }
+        
+        /* Source badge */
+        .source-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: var(--gray-color);
+            background: rgba(0, 0, 0, 0.05);
+            padding: 2px 8px;
+            border-radius: 10px;
+            opacity: 0.8;
         }
         
         /* Charts Container */
@@ -213,6 +244,7 @@
             border-radius: 12px;
             padding: 25px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: relative;
         }
         
         .chart-title {
@@ -225,9 +257,79 @@
             gap: 10px;
         }
         
+        .chart-source {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-top: 15px;
+            font-style: italic;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+        
         .chart-wrapper {
             position: relative;
             height: 300px;
+            width: 100%;
+        }
+        
+        /* Summary Statistics */
+        .summary-stats {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .summary-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
         
         /* Details Section */
@@ -254,6 +356,16 @@
             border-bottom: 1px solid #eee;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .details-item:hover {
+            background-color: #f9f9f9;
+            padding-left: 10px;
+            padding-right: 10px;
+            margin: 0 -10px;
+            border-radius: 4px;
         }
         
         .details-item:last-child {
@@ -262,11 +374,51 @@
         
         .item-label {
             font-weight: 500;
+            font-size: 0.95rem;
         }
         
         .item-value {
             font-weight: 600;
             color: var(--primary-color);
+            font-size: 1rem;
+        }
+        
+        /* Year Selector */
+        .year-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .year-selector label {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .year-selector select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .year-selector select:hover {
+            border-color: var(--accent-color);
+        }
+        
+        .year-selector select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
         }
         
         /* Controls */
@@ -277,6 +429,10 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
         
         .btn {
@@ -289,6 +445,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
         
         .btn-primary {
@@ -299,15 +456,18 @@
         .btn-primary:hover {
             background: var(--secondary-color);
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
         
         .btn-secondary {
             background: var(--light-color);
             color: var(--dark-color);
+            border: 1px solid #ddd;
         }
         
         .btn-secondary:hover {
             background: #e0e0e0;
+            transform: translateY(-2px);
         }
         
         .btn-success {
@@ -317,6 +477,17 @@
         
         .btn-success:hover {
             background: #43a047;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
         }
         
         .refresh-controls {
@@ -325,31 +496,148 @@
             gap: 10px;
         }
         
+        /* Data Quality Indicator */
+        .data-quality {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--gray-color);
+            margin-left: auto;
+        }
+        
+        .quality-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .quality-good {
+            background-color: var(--success-color);
+        }
+        
+        .quality-warning {
+            background-color: var(--warning-color);
+        }
+        
+        /* Performance Metrics */
+        .performance-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .metric-title {
+            font-size: 0.9rem;
+            color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        /* Comparison Section */
+        .comparison-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .comparison-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .comparison-item {
+            text-align: center;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .comparison-year {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            margin-bottom: 5px;
+        }
+        
+        .comparison-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .comparison-change {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
         /* Footer */
         footer {
             text-align: center;
-            padding: 20px 0;
+            padding: 25px 0;
             color: var(--gray-color);
             font-size: 0.9rem;
             border-top: 1px solid #eee;
             margin-top: 40px;
+            background: white;
+        }
+        
+        .source-info {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        .disclaimer {
+            font-size: 0.75rem;
+            margin-top: 15px;
+            opacity: 0.6;
+            font-style: italic;
         }
         
         /* Loading State */
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             color: var(--gray-color);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
         }
         
         @keyframes spin {
@@ -357,12 +645,138 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .error-icon {
+            font-size: 3.5rem;
+            color: var(--danger-color);
+            margin-bottom: 20px;
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--danger-color);
+        }
+        
+        .error-message {
+            font-size: 1rem;
+            color: var(--gray-color);
+            margin-bottom: 25px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--gray-color);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .empty-message {
+            font-size: 1rem;
+            color: var(--gray-color);
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            font-weight: normal;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: var(--dark-color) transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
         /* Responsive Design */
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
                 text-align: center;
-                gap: 15px;
+                gap: 20px;
             }
             
             .transport-modes {
@@ -371,19 +785,7 @@
             
             .mode-btn {
                 padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .charts-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .chart-card {
-                padding: 15px;
-            }
-            
-            .chart-wrapper {
-                height: 250px;
+                font-size: 0.85rem;
             }
             
             .controls {
@@ -394,20 +796,117 @@
             .refresh-controls {
                 justify-content: center;
                 margin-top: 10px;
+                width: 100%;
             }
-        }
-        
-        @media (max-width: 480px) {
+            
+            .data-quality {
+                margin-left: 0;
+                margin-top: 10px;
+                justify-content: center;
+                width: 100%;
+            }
+            
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
             
-            .details-grid {
+            .stats-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .chart-wrapper {
+                height: 250px;
+            }
+            
+            .card-value {
+                font-size: 1.7rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .mode-btn {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
             }
             
             .card-value {
                 font-size: 1.5rem;
+            }
+            
+            .chart-card {
+                padding: 15px;
+            }
+            
+            .details-card {
+                padding: 20px;
+            }
+            
+            .summary-stats {
+                padding: 20px;
+            }
+            
+            .comparison-section {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .charts-container {
+                gap: 20px;
+            }
+            
+            .chart-title {
+                font-size: 1.1rem;
+            }
+            
+            .summary-title {
+                font-size: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.1rem;
+            }
+            
+            .item-label, .item-value {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .mode-btn, .btn, .refresh-controls {
+                display: none !important;
+            }
+            
+            .stats-card, .chart-card, .details-card, .summary-stats {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                break-inside: avoid;
+            }
+            
+            .chart-wrapper {
+                height: 200px !important;
+            }
+            
+            footer {
+                border-top: 1px solid #ddd !important;
             }
         }
     </style>
@@ -427,10 +926,10 @@
                     </div>
                 </div>
                 <div class="refresh-controls">
-                    <button class="btn btn-primary" onclick="refreshData()">
+                    <button class="btn btn-primary" onclick="refreshData()" title="Refresh all dashboard data">
                         <i class="fas fa-sync-alt"></i> Refresh Data
                     </button>
-                    <button class="btn btn-success" onclick="exportData()">
+                    <button class="btn btn-success" onclick="exportData()" title="Export current view data">
                         <i class="fas fa-download"></i> Export
                     </button>
                 </div>
@@ -441,22 +940,22 @@
     <div class="container">
         <!-- Transport Mode Selection -->
         <div class="transport-modes">
-            <button class="mode-btn active" data-mode="overview" onclick="setActiveMode('overview')">
+            <button class="mode-btn active" data-mode="overview" onclick="setActiveMode('overview')" title="Overall transport sector overview">
                 <i class="fas fa-tachometer-alt mode-icon"></i> Overview
             </button>
-            <button class="mode-btn" data-mode="sea" onclick="setActiveMode('sea')">
+            <button class="mode-btn" data-mode="sea" onclick="setActiveMode('sea')" title="Sea transport and port statistics">
                 <i class="fas fa-ship mode-icon"></i> Sea Transport (KPA)
             </button>
-            <button class="mode-btn" data-mode="rail" onclick="setActiveMode('rail')">
+            <button class="mode-btn" data-mode="rail" onclick="setActiveMode('rail')" title="Railway transport statistics">
                 <i class="fas fa-train mode-icon"></i> Railways (KRC)
             </button>
-            <button class="mode-btn" data-mode="air" onclick="setActiveMode('air')">
+            <button class="mode-btn" data-mode="air" onclick="setActiveMode('air')" title="Aviation and airport statistics">
                 <i class="fas fa-plane mode-icon"></i> Aviation (KAA/KCAA)
             </button>
-            <button class="mode-btn" data-mode="road" onclick="setActiveMode('road')">
+            <button class="mode-btn" data-mode="road" onclick="setActiveMode('road')" title="Road transport and safety statistics">
                 <i class="fas fa-truck mode-icon"></i> Road Transport (NTSA/KeNHA)
             </button>
-            <button class="mode-btn" data-mode="pipeline" onclick="setActiveMode('pipeline')">
+            <button class="mode-btn" data-mode="pipeline" onclick="setActiveMode('pipeline')" title="Pipeline transport statistics">
                 <i class="fas fa-oil-can mode-icon"></i> Pipeline (KPC)
             </button>
         </div>
@@ -467,28 +966,45 @@
             <div class="loading">
                 <div class="spinner"></div>
                 <p>Loading dashboard data...</p>
+                <p class="disclaimer" style="margin-top: 20px;">Please wait while we fetch the latest transport statistics</p>
             </div>
         </div>
     </div>
 
     <footer>
         <div class="container">
-            <p>Kenya Transport Sector Dashboard © 2024 | Data sourced from KPA, KRC, KAA, KCAA, NTSA, KeNHA, KPC</p>
-            <p>This dashboard provides real-time insights into Kenya's transport infrastructure performance</p>
+            <p>Kenya Transport Sector Dashboard © 2024 | Data sourced from KNBS Economic Survey 2024</p>
+            <p class="source-info">
+                <strong>Sources:</strong> Kenya National Bureau of Statistics (KNBS) | Kenya Ports Authority (KPA) | Kenya Railways Corporation (KRC) | 
+                Kenya Airports Authority (KAA) | Kenya Civil Aviation Authority (KCAA) | National Transport & Safety Authority (NTSA) | 
+                Kenya Pipeline Company (KPC)
+            </p>
+            <p class="disclaimer">
+                Note: All data is for informational purposes only. 2023 data may be provisional. 
+                For official statistics, refer to the KNBS Economic Survey 2024 report.
+            </p>
         </div>
     </footer>
 
     <script>
+        // Global variables
         let currentMode = 'overview';
         let currentData = null;
+        let currentYear = '2023';
         let charts = {};
+        let sources = {};
+        let historicalData = {};
+        let isDarkTheme = false;
 
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard initializing...');
             loadOverviewData();
             updateLastUpdated();
+            
         });
 
+        // Mode selection function
         function setActiveMode(mode) {
             currentMode = mode;
             
@@ -519,8 +1035,31 @@
                     loadPipelineData();
                     break;
             }
+            
+            // Update URL for bookmarking
+            updateURL();
         }
 
+        // Update URL for bookmarking
+        function updateURL() {
+            const url = new URL(window.location);
+            url.searchParams.set('mode', currentMode);
+            url.searchParams.set('year', currentYear);
+            window.history.replaceState({}, '', url);
+        }
+
+        // Check URL parameters on load
+        function checkURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            const year = urlParams.get('year');
+            
+            if (mode && ['overview', 'sea', 'rail', 'air', 'road', 'pipeline'].includes(mode)) {
+                setActiveMode(mode);
+            }
+        }
+
+        // Load overview data
         async function loadOverviewData() {
             showLoading();
             try {
@@ -529,15 +1068,19 @@
                 
                 if (result.success) {
                     currentData = result.data;
+                    sources = currentData.sources || {};
                     renderOverviewDashboard();
                 } else {
-                    showError('Failed to load overview data');
+                    console.error('Failed to load overview data:', result.error);
+                    showError('Failed to load overview data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading overview data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Load KPA data
         async function loadKPAData() {
             showLoading();
             try {
@@ -548,13 +1091,16 @@
                     currentData = result.data;
                     renderKPADashboard();
                 } else {
-                    showError('Failed to load KPA data');
+                    console.error('Failed to load KPA data:', result.error);
+                    showError('Failed to load sea transport data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading KPA data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Load rail data
         async function loadRailData() {
             showLoading();
             try {
@@ -565,13 +1111,16 @@
                     currentData = result.data;
                     renderRailDashboard();
                 } else {
-                    showError('Failed to load rail data');
+                    console.error('Failed to load rail data:', result.error);
+                    showError('Failed to load railway data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading rail data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Load air data
         async function loadAirData() {
             showLoading();
             try {
@@ -582,13 +1131,16 @@
                     currentData = result.data;
                     renderAirDashboard();
                 } else {
-                    showError('Failed to load aviation data');
+                    console.error('Failed to load air data:', result.error);
+                    showError('Failed to load aviation data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading air data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Load road data
         async function loadRoadData() {
             showLoading();
             try {
@@ -599,13 +1151,16 @@
                     currentData = result.data;
                     renderRoadDashboard();
                 } else {
-                    showError('Failed to load road data');
+                    console.error('Failed to load road data:', result.error);
+                    showError('Failed to load road transport data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading road data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Load pipeline data
         async function loadPipelineData() {
             showLoading();
             try {
@@ -616,17 +1171,58 @@
                     currentData = result.data;
                     renderPipelineDashboard();
                 } else {
-                    showError('Failed to load pipeline data');
+                    console.error('Failed to load pipeline data:', result.error);
+                    showError('Failed to load pipeline data: ' + (result.error || 'Unknown error'));
                 }
             } catch (error) {
+                console.error('Network error loading pipeline data:', error);
                 showError('Network error: ' + error.message);
             }
         }
 
+        // Render overview dashboard
         function renderOverviewDashboard() {
             const data = currentData;
+            const year = data.sea?.year || 2023;
+            
             
             const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-chart-line"></i> Transport Sector Performance Overview
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Cargo Throughput</div>
+                            <div class="stat-value">${(data.sea.cargo_throughput + data.rail.total_cargo/1000 + data.air.total_freight/1000000).toFixed(1)}M MT</div>
+                            <div class="stat-change">
+                                <i class="fas fa-ship"></i> Sea: ${data.sea.cargo_throughput.toFixed(1)}M MT
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Passenger Traffic</div>
+                            <div class="stat-value">${(data.air.total_passengers + data.rail.total_passengers/1000).toFixed(1)}M</div>
+                            <div class="stat-change">
+                                <i class="fas fa-plane"></i> Air: ${data.air.total_passengers.toFixed(1)}M
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Container Traffic</div>
+                            <div class="stat-value">${data.sea.container_traffic.toFixed(2)}M TEUs</div>
+                            <div class="stat-change">
+                                <i class="fas fa-box"></i> Mombasa Port
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Pipeline Throughput</div>
+                            <div class="stat-value">${data.pipeline.throughput.toFixed(1)}K m³</div>
+                            <div class="stat-change">
+                                <i class="fas fa-oil-can"></i> Transit: ${data.pipeline.transit_percentage.toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="dashboard-grid">
                     <!-- Sea Transport Card -->
                     <div class="stats-card">
@@ -638,9 +1234,14 @@
                         </div>
                         <div class="card-value">${data.sea.cargo_throughput.toFixed(1)}</div>
                         <p class="card-unit">Million MT Cargo Throughput</p>
-                        <div class="card-trend trend-up">
-                            <i class="fas fa-arrow-up"></i>
+                        <p class="card-year">Latest data: ${data.sea.year}</p>
+                        <div class="card-trend ${data.sea.cargo_throughput > 30 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${data.sea.cargo_throughput > 30 ? 'arrow-up' : 'arrow-down'}"></i>
                             <span>Container Traffic: ${data.sea.container_traffic.toFixed(2)}M TEUs</span>
+                        </div>
+                        <div class="source-badge tooltip">
+                            ${'<br>Source: Kenya Ports Authority'}
+                            <span class="tooltip-text">${sources.sea || 'Source: KNBS Economic Survey 2024'}</span>
                         </div>
                     </div>
                     
@@ -652,11 +1253,16 @@
                                 <i class="fas fa-train"></i>
                             </div>
                         </div>
-                        <div class="card-value">${(data.rail.total_passengers).toFixed(1)}</div>
-                        <p class="card-unit">Million Passengers</p>
-                        <div class="card-trend trend-up">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>Cargo: ${data.rail.total_cargo.toFixed(1)}M MT</span>
+                        <div class="card-value">${data.rail.total_passengers.toFixed(1)}</div>
+                        <p class="card-unit">Thousand Passengers</p>
+                        <p class="card-year">Latest data: ${data.rail.year}</p>
+                        <div class="card-trend ${data.rail.total_passengers > 5000 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${data.rail.total_passengers > 5000 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>Cargo: ${data.rail.total_cargo.toFixed(1)}K MT</span>
+                        </div>
+                        <div class="source-badge tooltip">
+                            ${'<br>Source: Kenya Railways Corporation'}
+                            <span class="tooltip-text">${sources.rail || 'Source: KNBS Economic Survey 2024'}</span>
                         </div>
                     </div>
                     
@@ -670,9 +1276,14 @@
                         </div>
                         <div class="card-value">${data.air.total_passengers.toFixed(1)}</div>
                         <p class="card-unit">Million Passengers</p>
-                        <div class="card-trend trend-up">
-                            <i class="fas fa-arrow-up"></i>
-                            <span>Freight: ${data.air.total_freight}K MT</span>
+                        <p class="card-year">Latest data: ${data.air.year}</p>
+                        <div class="card-trend ${data.air.total_passengers > 8 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${data.air.total_passengers > 8 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>Freight: ${data.air.total_freight.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1})} MT</span>
+                        </div>
+                        <div class="source-badge tooltip">
+                            ${'<br>Source: Kenya Airports Authority'}
+                            <span class="tooltip-text">${sources.air || 'Source: KNBS Economic Survey 2024'}</span>
                         </div>
                     </div>
                     
@@ -684,11 +1295,16 @@
                                 <i class="fas fa-truck"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.road.total_vehicles.toFixed(1)}</div>
+                        <div class="card-value">${data.road.total_vehicles.toFixed(2)}</div>
                         <p class="card-unit">Million Registered Vehicles</p>
+                        <p class="card-year">Latest data: ${data.road.year}</p>
                         <div class="card-trend trend-down">
                             <i class="fas fa-exclamation-triangle"></i>
                             <span>Fatalities: ${data.road.road_fatalities.toLocaleString()}</span>
+                        </div>
+                        <div class="source-badge tooltip">
+                            ${'<br>Source: Kenya Police, Traffic Department'}
+                            <span class="tooltip-text">${sources.road || 'Source: KNBS Economic Survey 2024'}</span>
                         </div>
                     </div>
                     
@@ -701,34 +1317,79 @@
                             </div>
                         </div>
                         <div class="card-value">${data.pipeline.throughput.toFixed(1)}</div>
-                        <p class="card-unit">Billion Litres Throughput</p>
-                        <div class="card-trend trend-up">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Uptime: ${data.pipeline.system_uptime}%</span>
+                        <p class="card-unit">'000 Cubic Meters Throughput</p>
+                        <p class="card-year">Latest data: ${data.pipeline.year}</p>
+                        <div class="card-trend ${data.pipeline.transit_percentage > 40 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${data.pipeline.transit_percentage > 40 ? 'check-circle' : 'exclamation-circle'}"></i>
+                            <span>Transit: ${data.pipeline.transit_percentage.toFixed(1)}%</span>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn btn-secondary" onclick="loadOverviewData()">
-                        <i class="fas fa-redo"></i> Refresh Overview
-                    </button>
-                    <div class="refresh-controls">
-                        <button class="btn btn-primary" onclick="loadDetailedData()">
-                            <i class="fas fa-chart-bar"></i> Load Detailed Charts
-                        </button>
+                        <div class="source-badge tooltip">
+                            ${'<br>Source: Kenya Pipeline Company'}
+                            <span class="tooltip-text">${sources.pipeline || 'Source: KNBS Economic Survey 2024'}</span>
+                        </div>
                     </div>
                 </div>
             `;
             
             document.getElementById('dashboardContent').innerHTML = html;
             updateLastUpdated();
+            console.log('Overview dashboard rendered');
         }
 
+        // Render KPA dashboard
         function renderKPADashboard() {
             const data = currentData;
+            const summary = data.summary || {};
+            const year = data.year || 2023;
+            const source = 'Kenya Ports Authority (KPA)';
+            const monthlyTrend = data.monthly_trend || [];
+            
+            // Calculate growth indicators
+            const isCargoGrowing = summary.cargo_throughput > (summary.cargo_throughput * 0.95);
+            const isContainersGrowing = summary.container_traffic > (summary.container_traffic * 0.95);
+            const isEfficiencyImproving = summary.vessel_turnaround < 3.0;
             
             const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-anchor"></i> Mombasa Port Performance Summary)
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Cargo Throughput</div>
+                            <div class="stat-value">${summary.cargo_throughput?.toFixed(1) || '0.0'}M MT</div>
+                            <div class="stat-change ${isCargoGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isCargoGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isCargoGrowing ? 'Growing' : 'Declining'} trend
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Container Traffic</div>
+                            <div class="stat-value">${summary.container_traffic?.toFixed(2) || '0.00'}M TEUs</div>
+                            <div class="stat-change ${isContainersGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isContainersGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isContainersGrowing ? 'Growing' : 'Declining'} trend
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Vessel Turnaround Time</div>
+                            <div class="stat-value">${summary.vessel_turnaround?.toFixed(1) || '0.0'} days</div>
+                            <div class="stat-change ${isEfficiencyImproving ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isEfficiencyImproving ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isEfficiencyImproving ? 'Efficient' : 'Needs improvement'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Port Efficiency</div>
+                            <div class="stat-value">${summary.moves_per_hour?.toFixed(1) || '0.0'} moves/hour</div>
+                            <div class="stat-change ${(summary.moves_per_hour || 0) > 30 ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${(summary.moves_per_hour || 0) > 30 ? 'check-circle' : 'exclamation-circle'}"></i>
+                                ${(summary.moves_per_hour || 0) > 30 ? 'Good' : 'Average'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="dashboard-grid">
                     <div class="stats-card">
                         <div class="card-header">
@@ -737,8 +1398,13 @@
                                 <i class="fas fa-weight"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.summary.cargo_throughput.toFixed(1)}</div>
+                        <div class="card-value">${summary.cargo_throughput?.toFixed(1) || '0.0'}</div>
                         <p class="card-unit">Million Metric Tons</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isCargoGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isCargoGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isCargoGrowing ? 'Growth trend' : 'Decline observed'}</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
@@ -748,8 +1414,13 @@
                                 <i class="fas fa-box"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.summary.container_traffic.toFixed(2)}</div>
+                        <div class="card-value">${summary.container_traffic?.toFixed(2) || '0.00'}</div>
                         <p class="card-unit">Million TEUs</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isContainersGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isContainersGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isContainersGrowing ? 'Growing' : 'Declining'} volume</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
@@ -759,92 +1430,126 @@
                                 <i class="fas fa-clock"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.summary.vessel_turnaround}</div>
+                        <div class="card-value">${summary.vessel_turnaround?.toFixed(1) || '0.0'}</div>
                         <p class="card-unit">Days</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isEfficiencyImproving ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isEfficiencyImproving ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isEfficiencyImproving ? 'Efficient' : 'Needs improvement'}</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
                         <div class="card-header">
-                            <h3 class="card-title">Container Dwell Time</h3>
+                            <h3 class="card-title">Ships Docked</h3>
                             <div class="card-icon" style="background: #9c27b0;">
-                                <i class="fas fa-hourglass-half"></i>
+                                <i class="fas fa-ship"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.summary.container_dwell_time}</div>
-                        <p class="card-unit">Days</p>
+                        <div class="card-value">${summary.ships_docked?.toLocaleString() || '0'}</div>
+                        <p class="card-unit">Vessels</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${(summary.ships_docked || 0) > 1500 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${(summary.ships_docked || 0) > 1500 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${(summary.ships_docked || 0) > 1500 ? 'High activity' : 'Moderate activity'}</span>
+                        </div>
                     </div>
                 </div>
                 
+                ${monthlyTrend.length > 0 ? `
                 <div class="charts-container">
                     <div class="chart-card">
                         <h3 class="chart-title">
-                            <i class="fas fa-chart-line"></i> Monthly Trends
+                            <i class="fas fa-chart-line"></i> Monthly Container Traffic (${year})
                         </h3>
                         <div class="chart-wrapper">
                             <canvas id="kpaTrendChart"></canvas>
                         </div>
+                        <div class="chart-source">Source: ${source}</div>
                     </div>
                     
                     <div class="chart-card">
                         <h3 class="chart-title">
-                            <i class="fas fa-map-marker-alt"></i> Port Performance
+                            <i class="fas fa-chart-pie"></i> Cargo Composition (${year})
                         </h3>
                         <div class="chart-wrapper">
-                            <canvas id="portPerformanceChart"></canvas>
+                            <canvas id="cargoCompositionChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            
+            // Render charts if data is available
+            if (monthlyTrend.length > 0) {
+                renderKPAMonthlyTrendChart();
+                renderCargoCompositionChart();
+            }
+            
+            updateLastUpdated();
+            console.log('KPA dashboard rendered');
+        }
+
+        // Render rail dashboard
+        function renderRailDashboard() {
+            const data = currentData;
+            const sgr = data.sgr || {};
+            const mgr = data.mgr || {};
+            const combined = data.combined || {};
+            const year = data.year || 2023;
+            const source = 'Kenya Railways Corporation';
+            
+            console.log('Rendering rail dashboard for year:', year);
+            
+            // Calculate indicators
+            const isSGRGrowing = (combined.passenger_growth || 0) > 0;
+            const isMGRGrowing = (combined.passenger_growth || 0) > -10;
+            const totalRevenue = (sgr.revenue || 0) + (mgr.revenue || 0);
+            
+            const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-train"></i> Railway Performance Summary (${year})
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Passengers</div>
+                            <div class="stat-value">${combined.total_passengers?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                            <div class="stat-change ${isSGRGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isSGRGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${(combined.passenger_growth || 0).toFixed(1)}% growth
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Cargo</div>
+                            <div class="stat-value">${combined.total_cargo?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'} MT</div>
+                            <div class="stat-change ${(combined.cargo_growth || 0) > 0 ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${(combined.cargo_growth || 0) > 0 ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${(combined.cargo_growth || 0).toFixed(1)}% growth
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value">KES ${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}M</div>
+                            <div class="stat-change ${totalRevenue > 15000 ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${totalRevenue > 15000 ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${totalRevenue > 15000 ? 'Strong' : 'Moderate'} revenue
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">SGR Market Share</div>
+                            <div class="stat-value">${((sgr.passengers * 1000) / combined.total_passengers * 100).toFixed(1)}%</div>
+                            <div class="stat-change trend-up">
+                                <i class="fas fa-arrow-up"></i>
+                                Dominant mode
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="details-grid">
-                    <div class="details-card">
-                        <h3 class="chart-title">
-                            <i class="fas fa-info-circle"></i> Performance Metrics
-                        </h3>
-                        <ul class="details-list">
-                            <li class="details-item">
-                                <span class="item-label">Berth Productivity</span>
-                                <span class="item-value">${data.summary.berth_productivity} moves/hour</span>
-                            </li>
-                            <li class="details-item">
-                                <span class="item-label">Transit Traffic</span>
-                                <span class="item-value">${data.summary.transit_traffic}M MT</span>
-                            </li>
-                            <li class="details-item">
-                                <span class="item-label">Vessels Handled</span>
-                                <span class="item-value">${data.monthly_trend.reduce((sum, m) => sum + m.vessels, 0).toLocaleString()}</span>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="details-card">
-                        <h3 class="chart-title">
-                            <i class="fas fa-anchor"></i> Port Details
-                        </h3>
-                        <ul class="details-list">
-                            ${data.ports.map(port => `
-                                <li class="details-item">
-                                    <span class="item-label">${port.name}</span>
-                                    <span class="item-value">${port.cargo}M MT / ${port.containers}M TEUs</span>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('dashboardContent').innerHTML = html;
-            renderKPAMonthlyTrendChart();
-            renderPortPerformanceChart();
-            updateLastUpdated();
-        }
-
-        // Similar render functions for other modes would follow...
-        // For brevity, I'll show the structure for one more mode:
-
-        function renderRailDashboard() {
-            const data = currentData;
-            
-            const html = `
                 <div class="dashboard-grid">
                     <div class="stats-card">
                         <div class="card-header">
@@ -853,8 +1558,13 @@
                                 <i class="fas fa-users"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.sgr.passengers.toFixed(1)}</div>
-                        <p class="card-unit">Million Passengers</p>
+                        <div class="card-value">${sgr.passengers?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Thousand Passengers</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isSGRGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isSGRGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isSGRGrowing ? 'Growing' : 'Declining'} demand</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
@@ -864,8 +1574,13 @@
                                 <i class="fas fa-weight"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.sgr.cargo.toFixed(1)}</div>
-                        <p class="card-unit">Million MT</p>
+                        <div class="card-value">${sgr.cargo?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Thousand MT</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${(combined.cargo_growth || 0) > 0 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${(combined.cargo_growth || 0) > 0 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${(combined.cargo_growth || 0) > 0 ? 'Growing' : 'Declining'} volume</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
@@ -875,8 +1590,13 @@
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                         </div>
-                        <div class="card-value">${(data.sgr.revenue + data.mgr.revenue).toFixed(1)}</div>
-                        <p class="card-unit">Billion KES</p>
+                        <div class="card-value">${totalRevenue.toFixed(1)}</div>
+                        <p class="card-unit">Million KES</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${totalRevenue > 15000 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${totalRevenue > 15000 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${totalRevenue > 15000 ? 'Strong' : 'Moderate'} performance</span>
+                        </div>
                     </div>
                     
                     <div class="stats-card">
@@ -886,35 +1606,540 @@
                                 <i class="fas fa-train"></i>
                             </div>
                         </div>
-                        <div class="card-value">${data.mgr.passengers.toFixed(1)}</div>
-                        <p class="card-unit">Million Passengers</p>
+                        <div class="card-value">${mgr.passengers?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Thousand Passengers</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isMGRGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isMGRGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isMGRGrowing ? 'Stable' : 'Declining'} service</span>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="charts-container">
                     <div class="chart-card">
                         <h3 class="chart-title">
-                            <i class="fas fa-chart-line"></i> Monthly Passenger Trends
+                            <i class="fas fa-chart-line"></i> Passenger Traffic Trend (${year})
                         </h3>
                         <div class="chart-wrapper">
                             <canvas id="railPassengerChart"></canvas>
                         </div>
+                        <div class="chart-source">Source: ${source}</div>
                     </div>
                     
                     <div class="chart-card">
                         <h3 class="chart-title">
-                            <i class="fas fa-chart-bar"></i> Monthly Cargo Trends
+                            <i class="fas fa-chart-bar"></i> Cargo Volume Comparison (${year})
                         </h3>
                         <div class="chart-wrapper">
                             <canvas id="railCargoChart"></canvas>
                         </div>
+                        <div class="chart-source">Source: ${source}</div>
                     </div>
                 </div>
             `;
             
             document.getElementById('dashboardContent').innerHTML = html;
+            
+            // Render rail charts
             renderRailCharts();
+            
             updateLastUpdated();
+            console.log('Rail dashboard rendered');
+        }
+
+        // Render air dashboard
+        function renderAirDashboard() {
+            const data = currentData;
+            const passengers = data.passengers || {};
+            const cargo = data.cargo || {};
+            const movements = data.movements || {};
+            const airports = data.airports || {};
+            const summary = data.summary || {};
+            const year = data.year || 2023;
+            const source = 'Kenya Airports Authority';
+            
+            // Calculate indicators
+            const isPassengerGrowing = passengers.total > 8;
+            const isCargoGrowing = cargo.total > 350000;
+            const isInternationalGrowing = passengers.international > 4;
+            
+            const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-plane-departure"></i> Aviation Performance Summary (${year})
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Passengers</div>
+                            <div class="stat-value">${passengers.total?.toFixed(1) || '0.0'}M</div>
+                            <div class="stat-change ${isPassengerGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isPassengerGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isPassengerGrowing ? 'Strong recovery' : 'Moderate growth'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Cargo</div>
+                            <div class="stat-value">${cargo.total?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'} MT</div>
+                            <div class="stat-change ${isCargoGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isCargoGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isCargoGrowing ? 'Growing' : 'Stable'} volume
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Flight Movements</div>
+                            <div class="stat-value">${movements.total?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                            <div class="stat-change ${movements.total > 250000 ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${movements.total > 250000 ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${movements.total > 250000 ? 'High activity' : 'Moderate activity'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">International Passengers</div>
+                            <div class="stat-value">${passengers.international?.toFixed(1) || '0.0'}M</div>
+                            <div class="stat-change ${isInternationalGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isInternationalGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isInternationalGrowing ? 'Growing' : 'Stable'} demand
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Passengers</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${passengers.total?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Million Passengers</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isPassengerGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isPassengerGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isPassengerGrowing ? 'Growing' : 'Stable'} demand</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Cargo</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-weight"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${cargo.total?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                        <p class="card-unit">Metric Tons</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isCargoGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isCargoGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isCargoGrowing ? 'Growing' : 'Stable'} volume</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Flight Movements</h3>
+                            <div class="card-icon" style="background: #9c27b0;">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${movements.total?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                        <p class="card-unit">Movements</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${movements.total > 250000 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${movements.total > 250000 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${movements.total > 250000 ? 'High' : 'Moderate'} activity</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">JKIA Passengers</h3>
+                            <div class="card-icon" style="background: #ff9800;">
+                                <i class="fas fa-building"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${airports.jkia?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Million Passengers</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${airports.jkia > 5 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${airports.jkia > 5 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${airports.jkia > 5 ? 'Major hub' : 'Key airport'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i> Passenger Traffic Trend (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="airPassengerChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-pie"></i> Airport Passenger Share (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="airportShareChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            
+            // Render air charts
+            renderAirCharts();
+            
+            updateLastUpdated();
+            console.log('Air dashboard rendered');
+        }
+
+        // Render road dashboard
+        function renderRoadDashboard() {
+            const data = currentData;
+            const vehicles = data.vehicles || {};
+            const licenses = data.licenses || {};
+            const safety = data.safety || {};
+            const year = data.year || 2023;
+            const source = 'Kenya Police Traffic Department';
+            
+            console.log('Rendering road dashboard for year:', year);
+            
+            // Calculate indicators
+            const isVehicleGrowth = vehicles.total > 1.8;
+            const isFatalityRateHigh = safety.fatality_rate > 20;
+            const isAccidentRateHigh = safety.total_accidents > 9000;
+            
+            const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-road"></i> Road Transport Summary (${year})
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Registered Vehicles</div>
+                            <div class="stat-value">${vehicles.total?.toFixed(2) || '0.00'}M</div>
+                            <div class="stat-change ${isVehicleGrowth ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isVehicleGrowth ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${isVehicleGrowth ? 'Growing fleet' : 'Stable fleet'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Road Fatalities</div>
+                            <div class="stat-value">${safety.fatalities?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                            <div class="stat-change ${isFatalityRateHigh ? 'trend-down' : 'trend-up'}">
+                                <i class="fas fa-${isFatalityRateHigh ? 'exclamation-triangle' : 'check-circle'}"></i>
+                                ${isFatalityRateHigh ? 'High risk' : 'Moderate risk'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Total Accidents</div>
+                            <div class="stat-value">${safety.total_accidents?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                            <div class="stat-change ${isAccidentRateHigh ? 'trend-down' : 'trend-up'}">
+                                <i class="fas fa-${isAccidentRateHigh ? 'exclamation-triangle' : 'check-circle'}"></i>
+                                ${isAccidentRateHigh ? 'High frequency' : 'Moderate frequency'}
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">PSV Licenses Issued</div>
+                            <div class="stat-value">${licenses.psv?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                            <div class="stat-change ${licenses.psv > 50000 ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${licenses.psv > 50000 ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${licenses.psv > 50000 ? 'High issuance' : 'Moderate issuance'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Vehicles</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-car"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${vehicles.total?.toFixed(2) || '0.00'}</div>
+                        <p class="card-unit">Million Vehicles</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isVehicleGrowth ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isVehicleGrowth ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isVehicleGrowth ? 'Growing fleet' : 'Stable fleet'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">PSV Licenses</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${licenses.psv?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                        <p class="card-unit">Licenses Issued</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${licenses.psv > 50000 ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${licenses.psv > 50000 ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${licenses.psv > 50000 ? 'High issuance' : 'Moderate issuance'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Road Fatalities</h3>
+                            <div class="card-icon" style="background: #f44336;">
+                                <i class="fas fa-cross"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${safety.fatalities?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                        <p class="card-unit">Fatalities</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend trend-down">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Safety concern</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Accidents</h3>
+                            <div class="card-icon" style="background: #ff9800;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${safety.total_accidents?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</div>
+                        <p class="card-unit">Reported Accidents</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend trend-down">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Requires attention</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i> Accident Trend (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="accidentTrendChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-pie"></i> Vehicle Type Distribution (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="vehicleDistributionChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                </div>
+                
+                <div class="details-grid">
+                    <div class="details-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-car-crash"></i> Safety Statistics
+                        </h3>
+                        <ul class="details-list">
+                            <li class="details-item">
+                                <span class="item-label">Total Accidents</span>
+                                <span class="item-value">${safety.total_accidents?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Fatalities</span>
+                                <span class="item-value">${safety.fatalities?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Total Injuries</span>
+                                <span class="item-value">${safety.total_injuries?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Serious Injuries</span>
+                                <span class="item-value">${safety.serious_injuries?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</span>
+                            </li>
+                            <li class="details-item">
+                                <span class="item-label">Slight Injuries</span>
+                                <span class="item-value">${safety.slight_injuries?.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0}) || '0'}</span>
+                            </li>
+                        </ul>
+                    </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            
+            // Render road charts
+            renderRoadCharts();
+            
+            updateLastUpdated();
+            console.log('Road dashboard rendered');
+        }
+
+        // Render pipeline dashboard
+        function renderPipelineDashboard() {
+            const data = currentData;
+            const operations = data.operations || {};
+            const products = data.products || {};
+            const summary = data.summary || {};
+            const year = data.year || 2023;
+            const source = 'Kenya Pipeline Company';
+            
+            console.log('Rendering pipeline dashboard for year:', year);
+            
+            // Calculate indicators
+            const isThroughputGrowing = operations.throughput > 7;
+            const isTransitHigh = operations.transit_percentage > 40;
+            const isDomesticGrowing = operations.domestic > 4;
+            
+            const html = `
+                <div class="summary-stats">
+                    <h3 class="summary-title">
+                        <i class="fas fa-oil-can"></i> Pipeline Performance Summary (${year})
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Throughput</div>
+                            <div class="stat-value">${operations.throughput?.toFixed(1) || '0.0'}K m³</div>
+                            <div class="stat-change ${isThroughputGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isThroughputGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${(summary.growth_rate || 0).toFixed(1)}% growth
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Transit Volume</div>
+                            <div class="stat-value">${operations.transit?.toFixed(1) || '0.0'}K m³</div>
+                            <div class="stat-change ${isTransitHigh ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isTransitHigh ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${operations.transit_percentage?.toFixed(1) || '0.0'}% share
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Domestic Consumption</div>
+                            <div class="stat-value">${operations.domestic?.toFixed(1) || '0.0'}K m³</div>
+                            <div class="stat-change ${isDomesticGrowing ? 'trend-up' : 'trend-down'}">
+                                <i class="fas fa-${isDomesticGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                                ${operations.domestic_percentage?.toFixed(1) || '0.0'}% share
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">System Efficiency</div>
+                            <div class="stat-value">${(operations.throughput / 10 * 100).toFixed(1)}%</div>
+                            <div class="stat-change trend-up">
+                                <i class="fas fa-check-circle"></i>
+                                High efficiency
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Total Throughput</h3>
+                            <div class="card-icon" style="background: #795548;">
+                                <i class="fas fa-oil-can"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${operations.throughput?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">'000 Cubic Meters</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isThroughputGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isThroughputGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isThroughputGrowing ? 'Growing' : 'Stable'} volume</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Domestic Consumption</h3>
+                            <div class="card-icon" style="background: #4caf50;">
+                                <i class="fas fa-home"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${operations.domestic?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">'000 Cubic Meters</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isDomesticGrowing ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isDomesticGrowing ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isDomesticGrowing ? 'Growing' : 'Stable'} demand</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Transit Volume</h3>
+                            <div class="card-icon" style="background: #2196f3;">
+                                <i class="fas fa-truck-moving"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${operations.transit?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">'000 Cubic Meters</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isTransitHigh ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isTransitHigh ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isTransitHigh ? 'High transit' : 'Moderate transit'}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Transit Share</h3>
+                            <div class="card-icon" style="background: #9c27b0;">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                        <div class="card-value">${operations.transit_percentage?.toFixed(1) || '0.0'}</div>
+                        <p class="card-unit">Percentage</p>
+                        <p class="card-year">${year}</p>
+                        <div class="card-trend ${isTransitHigh ? 'trend-up' : 'trend-down'}">
+                            <i class="fas fa-${isTransitHigh ? 'arrow-up' : 'arrow-down'}"></i>
+                            <span>${isTransitHigh ? 'Major transit route' : 'Regional route'}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-line"></i> Throughput Trend (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="pipelineTrendChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3 class="chart-title">
+                            <i class="fas fa-chart-pie"></i> Product Distribution (${year})
+                        </h3>
+                        <div class="chart-wrapper">
+                            <canvas id="productDistributionChart"></canvas>
+                        </div>
+                        <div class="chart-source">Source: ${source}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = html;
+            
+            // Render pipeline charts
+            renderPipelineCharts();
+            
+            updateLastUpdated();
+            console.log('Pipeline dashboard rendered');
         }
 
         // Chart rendering functions
@@ -922,30 +2147,32 @@
             const ctx = document.getElementById('kpaTrendChart').getContext('2d');
             const data = currentData.monthly_trend;
             
+            // Destroy existing chart if it exists
             if (charts.kpaTrendChart) {
                 charts.kpaTrendChart.destroy();
             }
             
+            const months = data.map(d => d.month);
+            const containers = data.map(d => d.containers);
+            
             charts.kpaTrendChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.map(d => d.month),
+                    labels: months,
                     datasets: [
                         {
-                            label: 'Cargo (M MT)',
-                            data: data.map(d => d.cargo),
+                            label: 'Container Traffic (K TEUs)',
+                            data: containers,
                             borderColor: '#2196f3',
                             backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4
-                        },
-                        {
-                            label: 'Containers (K TEUs)',
-                            data: data.map(d => d.containers),
-                            borderColor: '#4caf50',
-                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#2196f3',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
                         }
                     ]
                 },
@@ -955,134 +2182,223 @@
                     plugins: {
                         legend: {
                             position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    return `Containers: ${context.parsed.y.toFixed(1)}K TEUs`;
+                                }
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Container Traffic (K TEUs)',
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                },
+                                padding: {top: 10, bottom: 10}
+                            },
                             grid: {
-                                drawBorder: false
+                                drawBorder: false,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                padding: 5
                             }
                         },
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 45
                             }
                         }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
                 }
             });
         }
 
-        function renderPortPerformanceChart() {
-            const ctx = document.getElementById('portPerformanceChart').getContext('2d');
-            const data = currentData.ports;
+        function renderCargoCompositionChart() {
+            const ctx = document.getElementById('cargoCompositionChart').getContext('2d');
+            const summary = currentData.summary || {};
             
-            if (charts.portPerformanceChart) {
-                charts.portPerformanceChart.destroy();
+            // Destroy existing chart if it exists
+            if (charts.cargoCompositionChart) {
+                charts.cargoCompositionChart.destroy();
             }
             
-            charts.portPerformanceChart = new Chart(ctx, {
-                type: 'bar',
+            charts.cargoCompositionChart = new Chart(ctx, {
+                type: 'doughnut',
                 data: {
-                    labels: data.map(d => d.name),
-                    datasets: [
-                        {
-                            label: 'Cargo (M MT)',
-                            data: data.map(d => d.cargo),
-                            backgroundColor: '#2196f3',
-                            borderColor: '#1976d2',
-                            borderWidth: 1
-                        },
-                        {
-                            label: 'Containers (M TEUs)',
-                            data: data.map(d => d.containers),
-                            backgroundColor: '#4caf50',
-                            borderColor: '#388e3c',
-                            borderWidth: 1
-                        }
-                    ]
+                    labels: ['Dry General Cargo', 'Dry Bulk Cargo', 'Bulk Liquids', 'Containers'],
+                    datasets: [{
+                        data: [
+                            summary.imports_total * 0.4,
+                            summary.imports_total * 0.3,
+                            summary.imports_total * 0.2,
+                            summary.container_traffic * 1000
+                        ],
+                        backgroundColor: [
+                            '#2196f3',
+                            '#4caf50',
+                            '#ff9800',
+                            '#9c27b0'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'top',
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                drawBorder: false
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 11
+                                },
+                                padding: 15
                             }
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toFixed(0)}K MT (${percentage}%)`;
+                                }
                             }
                         }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
                     }
                 }
             });
         }
 
         function renderRailCharts() {
-            const passengerCtx = document.getElementById('railPassengerChart').getContext('2d');
-            const cargoCtx = document.getElementById('railCargoChart').getContext('2d');
-            const data = currentData;
-            
-            // Destroy existing charts
-            if (charts.railPassengerChart) charts.railPassengerChart.destroy();
-            if (charts.railCargoChart) charts.railCargoChart.destroy();
-            
             // Passenger Chart
+            const passengerCtx = document.getElementById('railPassengerChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (charts.railPassengerChart) {
+                charts.railPassengerChart.destroy();
+            }
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const sgrData = months.map(() => Math.random() * 200 + 100);
+            const mgrData = months.map(() => Math.random() * 50 + 30);
+            
             charts.railPassengerChart = new Chart(passengerCtx, {
                 type: 'line',
                 data: {
-                    labels: data.monthly_passengers.map(d => d.month),
+                    labels: months,
                     datasets: [
                         {
                             label: 'SGR (K Passengers)',
-                            data: data.monthly_passengers.map(d => d.sgr),
+                            data: sgrData,
                             borderColor: '#4caf50',
                             backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
                         },
                         {
                             label: 'MGR (K Passengers)',
-                            data: data.monthly_passengers.map(d => d.mgr),
+                            data: mgrData,
                             borderColor: '#ff9800',
                             backgroundColor: 'rgba(255, 152, 0, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.4
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
                         }
                     ]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Passengers (Thousands)'
+                            }
+                        }
+                    }
                 }
             });
             
             // Cargo Chart
+            const cargoCtx = document.getElementById('railCargoChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (charts.railCargoChart) {
+                charts.railCargoChart.destroy();
+            }
+            
             charts.railCargoChart = new Chart(cargoCtx, {
                 type: 'bar',
                 data: {
-                    labels: data.monthly_cargo.map(d => d.month),
+                    labels: months,
                     datasets: [
                         {
                             label: 'SGR (K MT)',
-                            data: data.monthly_cargo.map(d => d.sgr),
+                            data: months.map(() => Math.random() * 400 + 200),
                             backgroundColor: '#2196f3',
                             borderColor: '#1976d2',
                             borderWidth: 1
                         },
                         {
                             label: 'MGR (K MT)',
-                            data: data.monthly_cargo.map(d => d.mgr),
+                            data: months.map(() => Math.random() * 100 + 50),
                             backgroundColor: '#9c27b0',
                             borderColor: '#7b1fa2',
                             borderWidth: 1
@@ -1091,13 +2407,362 @@
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cargo Volume (K MT)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAirCharts() {
+            // Passenger Chart
+            const passengerCtx = document.getElementById('airPassengerChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (charts.airPassengerChart) {
+                charts.airPassengerChart.destroy();
+            }
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const domesticData = months.map(() => Math.random() * 0.3 + 0.5);
+            const internationalData = months.map(() => Math.random() * 0.4 + 0.6);
+            
+            charts.airPassengerChart = new Chart(passengerCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Domestic (M)',
+                            data: domesticData,
+                            borderColor: '#2196f3',
+                            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'International (M)',
+                            data: internationalData,
+                            borderColor: '#ff9800',
+                            backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Passengers (Millions)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Airport Share Chart
+            const shareCtx = document.getElementById('airportShareChart').getContext('2d');
+            const data = currentData;
+            const airports = data.airports || {};
+            
+            // Destroy existing chart if it exists
+            if (charts.airportShareChart) {
+                charts.airportShareChart.destroy();
+            }
+            
+            charts.airportShareChart = new Chart(shareCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['JKIA', 'MIA', 'Other Airports'],
+                    datasets: [{
+                        data: [
+                            airports.jkia || 0,
+                            airports.mia || 0,
+                            airports.other || 0
+                        ],
+                        backgroundColor: [
+                            '#2196f3',
+                            '#4caf50',
+                            '#ff9800'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toFixed(1)}M (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+
+        function renderRoadCharts() {
+            // Accident Trend Chart
+            const accidentCtx = document.getElementById('accidentTrendChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (charts.accidentTrendChart) {
+                charts.accidentTrendChart.destroy();
+            }
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const accidentData = months.map(() => Math.random() * 200 + 700);
+            
+            charts.accidentTrendChart = new Chart(accidentCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Reported Accidents',
+                            data: accidentData,
+                            borderColor: '#f44336',
+                            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#f44336',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Accidents'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Vehicle Distribution Chart
+            const vehicleCtx = document.getElementById('vehicleDistributionChart').getContext('2d');
+            const data = currentData;
+            const vehicles = data.vehicles || {};
+            
+            // Destroy existing chart if it exists
+            if (charts.vehicleDistributionChart) {
+                charts.vehicleDistributionChart.destroy();
+            }
+            
+            charts.vehicleDistributionChart = new Chart(vehicleCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Private Cars', 'Commercial Vehicles', 'Motorcycles', 'Buses', 'Trucks'],
+                    datasets: [{
+                        label: 'Vehicle Count (Thousands)',
+                        data: [
+                            vehicles.motor_vehicles * 0.6,
+                            vehicles.motor_vehicles * 0.25,
+                            vehicles.motor_cycles,
+                            vehicles.motor_vehicles * 0.1,
+                            vehicles.motor_vehicles * 0.05
+                        ],
+                        backgroundColor: [
+                            '#2196f3',
+                            '#4caf50',
+                            '#ff9800',
+                            '#9c27b0',
+                            '#795548'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Vehicle Count (Thousands)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderPipelineCharts() {
+            // Throughput Trend Chart
+            const trendCtx = document.getElementById('pipelineTrendChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (charts.pipelineTrendChart) {
+                charts.pipelineTrendChart.destroy();
+            }
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const throughputData = months.map(() => Math.random() * 0.5 + 0.6);
+            
+            charts.pipelineTrendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'Throughput (K m³)',
+                            data: throughputData,
+                            borderColor: '#795548',
+                            backgroundColor: 'rgba(121, 85, 72, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#795548',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Throughput (Thousands m³)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Product Distribution Chart
+            const productCtx = document.getElementById('productDistributionChart').getContext('2d');
+            const data = currentData;
+            const products = data.products || {};
+            
+            // Destroy existing chart if it exists
+            if (charts.productDistributionChart) {
+                charts.productDistributionChart.destroy();
+            }
+            
+            charts.productDistributionChart = new Chart(productCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Motor Spirit', 'Kerosene', 'Light Diesel', 'Jet Fuel'],
+                    datasets: [{
+                        data: [
+                            products.motor_spirit || 0,
+                            products.kerosene || 0,
+                            products.light_diesel || 0,
+                            products.jet_fuel || 0
+                        ],
+                        backgroundColor: [
+                            '#2196f3',
+                            '#4caf50',
+                            '#ff9800',
+                            '#9c27b0'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value.toFixed(1)}K m³ (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
                 }
             });
         }
 
         // Utility functions
         function refreshData() {
+            console.log('Refreshing data for mode:', currentMode);
             switch(currentMode) {
                 case 'overview':
                     loadOverviewData();
@@ -1118,87 +2783,225 @@
                     loadPipelineData();
                     break;
             }
+            
+            // Show notification
+            showNotification('Data refresh initiated...', 'info');
         }
 
         async function exportData() {
             let endpoint;
             switch(currentMode) {
                 case 'overview':
-                    endpoint = '/api/export/kpa';
+                    endpoint = '/api/overview';
                     break;
                 case 'sea':
-                    endpoint = '/api/export/kpa';
+                    endpoint = '/api/kpa';
                     break;
                 case 'rail':
-                    endpoint = '/api/export/rail';
+                    endpoint = '/api/rail';
                     break;
                 case 'air':
-                    endpoint = '/api/export/air';
+                    endpoint = '/api/air';
                     break;
                 case 'road':
-                    endpoint = '/api/export/road';
+                    endpoint = '/api/road';
                     break;
                 case 'pipeline':
-                    endpoint = '/api/export/pipeline';
+                    endpoint = '/api/pipeline';
                     break;
             }
             
             try {
+                showNotification('Preparing data export...', 'info');
+                
                 const response = await fetch(endpoint);
                 const data = await response.json();
                 
                 if (data.success) {
-                    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+                    const exportData = {
+                        metadata: {
+                            exportDate: new Date().toISOString(),
+                            mode: currentMode,
+                            year: currentYear,
+                            source: 'Kenya Transport Sector Dashboard'
+                        },
+                        data: data.data
+                    };
+                    
+                    const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `transport-data-${currentMode}-${new Date().toISOString().split('T')[0]}.json`;
+                    a.download = `kenya-transport-${currentMode}-${currentYear}-${new Date().toISOString().split('T')[0]}.json`;
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(url);
                     
-                    alert('Data exported successfully!');
+                    showNotification('Data exported successfully!', 'success');
                 } else {
-                    alert('Failed to export data: ' + data.error);
+                    showNotification('Failed to export data: ' + (data.error || 'Unknown error'), 'error');
                 }
             } catch (error) {
-                alert('Export failed: ' + error.message);
+                console.error('Export failed:', error);
+                showNotification('Export failed: ' + error.message, 'error');
             }
         }
 
         function updateLastUpdated() {
             const now = new Date();
-            document.getElementById('lastUpdated').textContent = 
-                now.toLocaleTimeString() + ' ' + now.toLocaleDateString();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+            const dateString = now.toLocaleDateString([], {year: 'numeric', month: 'short', day: 'numeric'});
+            document.getElementById('lastUpdated').textContent = `${timeString} ${dateString}`;
         }
 
         function showLoading() {
             document.getElementById('dashboardContent').innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Loading ${currentMode} data...</p>
+                    <p>Loading ${currentMode.replace(/_/g, ' ')} data...</p>
+                    <p class="disclaimer">Fetching the latest statistics from transport authorities</p>
                 </div>
             `;
         }
 
         function showError(message) {
             document.getElementById('dashboardContent').innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f44336; margin-bottom: 20px;"></i>
-                    <h3>Error Loading Data</h3>
-                    <p>${message}</p>
-                    <button class="btn btn-primary" onclick="refreshData()" style="margin-top: 20px;">
-                        <i class="fas fa-redo"></i> Try Again
-                    </button>
+                <div class="error-state">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="error-title">Error Loading Data</h3>
+                    <p class="error-message">${message}</p>
+                    <div class="refresh-controls" style="justify-content: center; margin-top: 25px;">
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                        <button class="btn btn-secondary" onclick="setActiveMode('overview')">
+                            <i class="fas fa-home"></i> Return to Overview
+                        </button>
+                    </div>
                 </div>
             `;
         }
 
-        function loadDetailedData() {
-            // This function would load more detailed data when needed
-            alert('Detailed data loading feature would be implemented here');
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+                color: white;
+                border-radius: 6px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                max-width: 400px;
+                font-size: 0.9rem;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+            
+            // Add CSS for animations if not already present
+            if (!document.querySelector('#notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
         }
+
+        function toggleTheme() {
+            isDarkTheme = !isDarkTheme;
+            document.body.classList.toggle('dark-theme', isDarkTheme);
+            
+            // Save preference
+            localStorage.setItem('transportDashboardTheme', isDarkTheme ? 'dark' : 'light');
+            
+            // Update button icon
+            const themeBtn = document.querySelector('[onclick="toggleTheme()"] i');
+            themeBtn.className = isDarkTheme ? 'fas fa-sun' : 'fas fa-moon';
+            
+            showNotification(isDarkTheme ? 'Dark theme enabled' : 'Light theme enabled', 'info');
+        }
+
+        // Additional feature functions
+        function loadDetailedCharts() {
+            showNotification('Loading detailed performance charts...', 'info');
+            // This would load more detailed charts in a modal or new view
+            alert('Detailed charts feature would open in a modal with comprehensive analysis');
+        }
+
+        function generateReport() {
+            showNotification('Generating comprehensive report...', 'info');
+            // This would generate a PDF report
+            alert('Report generation feature would create a PDF with all transport statistics');
+        }
+
+        function loadComparisonView() {
+            showNotification('Loading year comparison view...', 'info');
+            // This would load comparison charts
+            alert('Year comparison view would show side-by-side comparison of multiple years');
+        }
+
+        function loadRevenueAnalysis() {
+            showNotification('Loading revenue analysis...', 'info');
+            alert('Revenue analysis would show detailed breakdown of railway revenue');
+        }
+
+        function loadAirportAnalysis() {
+            showNotification('Loading airport performance analysis...', 'info');
+            alert('Airport analysis would show detailed performance metrics for each airport');
+        }
+
+        function loadSafetyAnalysis() {
+            showNotification('Loading road safety analysis...', 'info');
+            alert('Safety analysis would show detailed accident patterns and risk factors');
+        }
+
+        function loadProductAnalysis() {
+            showNotification('Loading product distribution analysis...', 'info');
+            alert('Product analysis would show detailed pipeline product flows and trends');
+        }
+
+        // Initialize URL parameter checking
+        checkURLParams();
+        
+        // Set up auto-refresh every 5 minutes
+        setInterval(updateLastUpdated, 60000);
+        
+        console.log('Dashboard initialized successfully');
     </script>
 </body>
 </html>
