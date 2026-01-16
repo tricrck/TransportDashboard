@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Create Link Data Source{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="mb-4">
+                <h1 class="h2">
+                    <i class="fas fa-link me-2"></i>Create Link Data Source
+                </h1>
+                <p class="text-muted">Connect to external file URLs</p>
+            </div>
+
+            <form method="post">
+                {{ form.hidden_tag() }}
+
+                <!-- URL Configuration -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-globe me-2"></i>File URL</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.file_url.label(class="form-label") }}
+                            {{ form.file_url(class="form-control" + (" is-invalid" if form.file_url.errors else "")) }}
+                            {% if form.file_url.errors %}
+                                <div class="invalid-feedback">{{ form.file_url.errors[0] }}</div>
+                            {% endif %}
+                            <small class="text-muted">Example: https://example.com/data/file.csv</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.data_format.label(class="form-label") }}
+                            {{ form.data_format(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Authentication -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Authentication</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3 form-check">
+                            {{ form.requires_auth(class="form-check-input") }}
+                            {{ form.requires_auth.label(class="form-check-label") }}
+                        </div>
+
+                        <div id="authFields" style="display: none;">
+                            <div class="mb-3">
+                                {{ form.auth_type.label(class="form-label") }}
+                                {{ form.auth_type(class="form-control") }}
+                            </div>
+
+                            <div id="basicAuthFields" style="display: none;">
+                                <div class="mb-3">
+                                    {{ form.auth_username.label(class="form-label") }}
+                                    {{ form.auth_username(class="form-control") }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.auth_password.label(class="form-label") }}
+                                    {{ form.auth_password(class="form-control") }}
+                                </div>
+                            </div>
+
+                            <div id="tokenField" style="display: none;">
+                                <div class="mb-3">
+                                    {{ form.auth_token.label(class="form-label") }}
+                                    {{ form.auth_token(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Info & Settings (reuse from base form) -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.reference.label(class="form-label") }}
+                            {{ form.reference(class="form-control") }}
+                            <small class="text-muted">{{ form.reference.description }}</small>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control") }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.tags.label(class="form-label") }}
+                            {{ form.tags(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refresh & Cache Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    {{ form.auto_refresh(class="form-check-input") }}
+                                    {{ form.auto_refresh.label(class="form-check-label") }}
+                                </div>
+                                <div class="mb-3" id="refreshFreqField">
+                                    {{ form.refresh_frequency.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.refresh_frequency(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    {{ form.cache_enabled(class="form-check-input") }}
+                                    {{ form.cache_enabled.label(class="form-check-label") }}
+                                </div>
+                                <div class="mb-3" id="cacheTTLField">
+                                    {{ form.cache_ttl.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.cache_ttl(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            {{ form.is_active(class="form-check-input") }}
+                            {{ form.is_active.label(class="form-check-label") }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('data_sources.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const requiresAuth = document.getElementById('requires_auth');
+    const authFields = document.getElementById('authFields');
+    const authType = document.getElementById('auth_type');
+    const basicAuth = document.getElementById('basicAuthFields');
+    const tokenField = document.getElementById('tokenField');
+    const autoRefresh = document.getElementById('auto_refresh');
+    const cacheEnabled = document.getElementById('cache_enabled');
+
+    requiresAuth.addEventListener('change', function() {
+        authFields.style.display = this.checked ? 'block' : 'none';
+    });
+
+    authType.addEventListener('change', function() {
+        basicAuth.style.display = this.value === 'basic' ? 'block' : 'none';
+        tokenField.style.display = ['bearer', 'api_key'].includes(this.value) ? 'block' : 'none';
+    });
+
+    autoRefresh.addEventListener('change', function() {
+        document.getElementById('refreshFreqField').style.display = this.checked ? 'block' : 'none';
+    });
+
+    cacheEnabled.addEventListener('change', function() {
+        document.getElementById('cacheTTLField').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Initial state
+    authFields.style.display = requiresAuth.checked ? 'block' : 'none';
+    document.getElementById('refreshFreqField').style.display = autoRefresh.checked ? 'block' : 'none';
+    document.getElementById('cacheTTLField').style.display = cacheEnabled.checked ? 'block' : 'none';
+});
+</script>
+{% endblock %}

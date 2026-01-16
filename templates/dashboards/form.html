@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-8 py-10">
+    <!-- Page Header -->
+    <header class="mb-10">
+        <a href="{{ url_for('dashboards.index') }}" class="text-blue-600 hover:text-blue-700 font-medium mb-2 inline-block">
+            <i class="fas fa-arrow-left mr-2"></i>Back to Dashboards
+        </a>
+        <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">
+            Create National Dashboard
+        </h1>
+        <p class="mt-3 text-lg text-slate-600">
+            Establish a single, trusted view of national performance metrics, trends, and key indicators.
+        </p>
+    </header>
+
+    <form action="{{ url_for('dashboards.create') }}" method="POST" class="space-y-10">
+        {{ form.hidden_tag() }}
+
+        <!-- Dashboard Identification -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">
+                Dashboard Identification
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label for="name" class="block text-sm font-semibold text-slate-700">
+                        Dashboard Name *
+                    </label>
+                    {{ form.name(class="w-full rounded-xl border-slate-300 shadow-sm focus:ring-blue-600 focus:border-blue-600") }}
+                    {% if form.name.errors %}
+                        <p class="text-xs text-red-600">{{ form.name.errors[0] }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="slug" class="block text-sm font-semibold text-slate-700">
+                        URL Slug
+                    </label>
+                    {{ form.slug(class="w-full rounded-xl border-slate-300 shadow-sm focus:ring-blue-600 focus:border-blue-600") }}
+                    <p class="text-xs text-slate-500">
+                        Leave blank to auto-generate from name
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-2">
+                <label for="description" class="block text-sm font-semibold text-slate-700">
+                    Strategic Purpose
+                </label>
+                {{ form.description(class="w-full rounded-xl border-slate-300 shadow-sm focus:ring-blue-600 focus:border-blue-600") }}
+                <p class="text-xs text-slate-500">
+                    Briefly describe the objective and decision-making role of this dashboard.
+                </p>
+            </div>
+        </section>
+
+        <!-- Layout Configuration -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">
+                Layout Configuration
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="space-y-2">
+                    <label for="layout_type" class="block text-sm font-semibold text-slate-700">
+                        Layout Type
+                    </label>
+                    {{ form.layout_type(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="columns" class="block text-sm font-semibold text-slate-700">
+                        Grid Columns
+                    </label>
+                    {{ form.columns(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="row_height" class="block text-sm font-semibold text-slate-700">
+                        Row Height (px)
+                    </label>
+                    {{ form.row_height(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="space-y-2">
+                    <label for="gap" class="block text-sm font-semibold text-slate-700">
+                        Gap Between Widgets (px)
+                    </label>
+                    {{ form.gap(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="theme" class="block text-sm font-semibold text-slate-700">
+                        Theme
+                    </label>
+                    {{ form.theme(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+            </div>
+        </section>
+
+        <!-- Refresh & Behavior -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">
+                Refresh & Behavior Settings
+            </h2>
+
+            <div class="space-y-6">
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                    <div>
+                        <label for="auto_refresh" class="font-semibold text-slate-700 cursor-pointer">
+                            Enable Auto-Refresh
+                        </label>
+                        <p class="text-xs text-slate-500">Automatically refresh dashboard data</p>
+                    </div>
+                    {{ form.auto_refresh(class="w-12 h-6 rounded-full") }}
+                </div>
+
+                <div class="space-y-2">
+                    <label for="refresh_interval" class="block text-sm font-semibold text-slate-700">
+                        Refresh Interval (seconds)
+                    </label>
+                    {{ form.refresh_interval(class="w-full rounded-xl border-slate-300 shadow-sm") }}
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <label for="enable_filters" class="font-semibold text-slate-700 cursor-pointer text-sm">
+                            Enable Filters
+                        </label>
+                        {{ form.enable_filters(class="rounded") }}
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <label for="enable_export" class="font-semibold text-slate-700 cursor-pointer text-sm">
+                            Enable Export
+                        </label>
+                        {{ form.enable_export(class="rounded") }}
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <label for="enable_fullscreen" class="font-semibold text-slate-700 cursor-pointer text-sm">
+                            Enable Fullscreen
+                        </label>
+                        {{ form.enable_fullscreen(class="rounded") }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Widget Selection -->
+        {% if available_widgets %}
+        <section class="bg-slate-50 rounded-2xl border border-dashed border-slate-300 p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-2 text-center">
+                Initial Visual Components
+            </h2>
+            <p class="text-slate-600 text-center mb-6">
+                Select the widgets to include in the initial dashboard layout. These can be refined later.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for widget in available_widgets %}
+                <label class="flex items-start p-4 bg-white rounded-lg border border-slate-200 cursor-pointer hover:border-blue-500 hover:shadow-md transition">
+                    <input type="checkbox"
+                           name="widget_ids"
+                           value="{{ widget.id }}"
+                           class="mt-1 mr-3 rounded text-blue-600 focus:ring-blue-500">
+                    <div class="flex-1">
+                        <span class="text-sm font-semibold text-slate-800 block">
+                            {{ widget.name }}
+                        </span>
+                        <span class="text-xs text-slate-500 block mt-1">
+                            {{ widget.widget_type.value }} · {{ widget.data_source.name }}
+                        </span>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Access Control -->
+        <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">
+                Access Control
+            </h2>
+
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <label for="allowed_roles" class="block text-sm font-semibold text-slate-700">
+                        Allowed Roles
+                    </label>
+                    {{ form.allowed_roles(class="w-full rounded-xl border-slate-300 shadow-sm", size=5) }}
+                    <p class="text-xs text-slate-500">
+                        Hold Ctrl/Cmd to select multiple. Leave empty to allow all roles.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <label for="is_public" class="font-semibold text-slate-700 cursor-pointer">
+                                Public Dashboard
+                            </label>
+                            <p class="text-xs text-slate-500">Accessible without login</p>
+                        </div>
+                        {{ form.is_public(class="rounded") }}
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <label for="is_default" class="font-semibold text-slate-700 cursor-pointer">
+                                Default Dashboard
+                            </label>
+                            <p class="text-xs text-slate-500">Show on login</p>
+                        </div>
+                        {{ form.is_default(class="rounded") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <label for="is_active" class="font-semibold text-slate-700 cursor-pointer">
+                                Active
+                            </label>
+                            <p class="text-xs text-slate-500">Dashboard is visible</p>
+                        </div>
+                        {{ form.is_active(class="rounded") }}
+                    </div>
+
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div>
+                            <label for="is_template" class="font-semibold text-slate-700 cursor-pointer">
+                                Save as Template
+                            </label>
+                            <p class="text-xs text-slate-500">Reusable configuration</p>
+                        </div>
+                        {{ form.is_template(class="rounded") }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="flex justify-end items-center gap-4 pt-4">
+            <a href="{{ url_for('dashboards.index') }}"
+               class="text-slate-500 hover:text-slate-700 font-medium px-6 py-3">
+                Cancel
+            </a>
+            {{ form.submit(class="px-8 py-3 bg-slate-900 text-white font-bold rounded-xl shadow-lg hover:bg-slate-800 transition") }}
+        </div>
+    </form>
+</div>
+
+<!-- Form Validation Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="fixed bottom-4 right-4 z-50 space-y-2">
+            {% for category, message in messages %}
+            <div class="bg-white border-l-4 rounded-lg shadow-lg p-4 max-w-md
+                        {% if category == 'success' %}border-green-500{% elif category == 'danger' %}border-red-500{% else %}border-blue-500{% endif %}">
+                <div class="flex items-start">
+                    <i class="fas {% if category == 'success' %}fa-check-circle text-green-500{% elif category == 'danger' %}fa-exclamation-circle text-red-500{% else %}fa-info-circle text-blue-500{% endif %} mt-0.5 mr-3"></i>
+                    <p class="text-sm text-slate-700 font-medium">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+{% endblock %}

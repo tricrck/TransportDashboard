@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Users</h1>
+            <p class="text-slate-600 mt-1">
+                Manage system users, roles, and access levels.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.create_user') }}"
+           class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700">
+            + New User
+        </a>
+    </div>
+
+    <!-- Filters -->
+    <form method="GET" class="flex gap-4 mb-6">
+        <input type="text"
+               name="search"
+               placeholder="Search users..."
+               class="rounded-lg border-slate-300">
+
+        <select name="role_id" class="rounded-lg border-slate-300">
+            <option value="">All Roles</option>
+            {% for role in roles %}
+            <option value="{{ role.id }}">{{ role.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="status" class="rounded-lg border-slate-300">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+
+        <button class="px-4 py-2 bg-slate-900 text-white rounded-lg font-semibold">
+            Filter
+        </button>
+    </form>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 border-b text-xs uppercase tracking-wider text-slate-500">
+                <tr>
+                    <th class="p-4">User</th>
+                    <th class="p-4">Role</th>
+                    <th class="p-4">Organization</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4">
+                        <p class="font-semibold">{{ user.first_name }} {{ user.last_name }}</p>
+                        <p class="text-xs text-slate-500">{{ user.email }}</p>
+                    </td>
+                    <td class="p-4">{{ user.role.name }}</td>
+                    <td class="p-4">{{ user.organization.name }}</td>
+                    <td class="p-4">
+                        {% if user.is_active %}
+                            <span class="text-green-600 font-semibold">Active</span>
+                        {% else %}
+                            <span class="text-red-600 font-semibold">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-right space-x-3">
+                        <a href="{{ url_for('admin.edit_user', id=user.id) }}"
+                           class="text-blue-600 font-medium hover:underline">
+                            Edit
+                        </a>
+                        <form action="{{ url_for('admin.delete_user', id=user.id) }}"
+                              method="POST"
+                              class="inline"
+                              onsubmit="return confirm('Delete this user?');">
+                            <button class="text-red-600 font-medium hover:underline">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

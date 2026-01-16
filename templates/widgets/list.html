@@ -1,0 +1,49 @@
+<!-- The list view provides a **"centralized view"** to manage and locate widgets by searching by name or filtering by type. -->
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+        <div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Widget Library</h1>
+            <p class="text-slate-500 font-medium">Manage visualizations across the national transport ecosystem.</p>
+        </div>
+        <a href="{{ url_for('widgets.create') }}" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-md hover:bg-blue-700 transition-all">
+            + New Visualization
+        </a>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-wrap gap-4 items-center">
+        <input type="text" placeholder="Search widgets (e.g., 'Cargo', 'Accidents')..." class="flex-1 min-w-[300px] border-slate-200 rounded-xl">
+        <select class="border-slate-200 rounded-xl text-sm font-semibold text-slate-600">
+            <option>All Types</option>
+            <option>KPIs</option>
+            <option>Bar Charts</option>
+            <option>Line Graphs</option>
+            <option>Heat Maps</option>
+        </select>
+    </div>
+
+    <!-- Widget Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for widget in widgets %}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="px-2 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold uppercase rounded-md">{{ widget.type }}</span>
+                    <div class="flex space-x-2">
+                        <a href="{{ url_for('widgets.edit', id=widget.id) }}" class="text-slate-400 hover:text-blue-600"><i class="fas fa-edit"></i></a>
+                    </div>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-1">{{ widget.name }}</h3>
+                <p class="text-xs text-slate-500 line-clamp-2">{{ widget.description or 'No description provided.' }}</p>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+                <span class="text-[10px] font-bold text-slate-400 uppercase">Source: {{ widget.data_source.name }}</span>
+                <a href="{{ url_for('widgets.view', id=widget.id) }}" class="text-sm font-bold text-blue-600 hover:underline">Preview →</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

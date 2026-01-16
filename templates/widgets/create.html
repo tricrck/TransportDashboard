@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-6">
+    <div class="mb-10">
+        <h1 class="text-3xl font-extrabold text-slate-900">Create Dynamic Widget</h1>
+        <p class="text-slate-600">Transform raw data from agencies like KPA or NTSA into actionable visual insights.</p>
+    </div>
+
+    <!-- Step Form Container -->
+    <form action="{{ url_for('widgets.create') }}" method="POST" class="space-y-8">
+        <!-- Step 1: Identification & Type -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6">Step 1: Visual Identity</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700">Widget Name</label>
+                    <input type="text" name="name" placeholder="e.g., Vessel Turnaround Time" class="w-full rounded-xl border-slate-300 shadow-sm" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-slate-700">Widget Type</label>
+                    <select name="type" class="w-full rounded-xl border-slate-300 shadow-sm" required>
+                        <option value="kpi">KPI (Single/Multiple Stats)</option>
+                        <option value="bar">Bar Chart</option>
+                        <option value="line">Line Chart</option>
+                        <option value="radar">Radar Chart</option>
+                        <option value="heat_map">Heat Map</option>
+                        <option value="table">Detailed Table</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-6">
+                <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                <textarea name="description" rows="2" class="w-full rounded-xl border-slate-300 shadow-sm" placeholder="Purpose of this visualization..."></textarea>
+            </div>
+        </div>
+
+        <!-- Step 2: Data Mapping -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6">Step 2: Data Source & Logic</h2>
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Connect Data Source</label>
+                    <select name="data_source_id" class="w-full rounded-xl border-slate-300 shadow-sm">
+                        {% for source in data_sources %}
+                        <option value="{{ source.id }}">{{ source.name }} ({{ source.organization.name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="p-4 bg-slate-900 rounded-xl">
+                    <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Configurable Data Fetching Script</label>
+                    <textarea name="query_script" rows="4" class="w-full bg-transparent border-none text-green-400 font-mono text-sm focus:ring-0" placeholder="// Define the logic to fetch specific entities (e.g., flights, cargo tonnage)"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: KPI Performance Signaling -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-sm font-bold text-blue-600 uppercase tracking-widest mb-6">Step 3: Performance Thresholds</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-4 border border-green-200 bg-green-50 rounded-xl">
+                    <label class="block text-xs font-bold text-green-700 uppercase">Green (Strong)</label>
+                    <input type="text" placeholder="Value range..." class="mt-2 w-full border-green-300 rounded-lg text-sm">
+                </div>
+                <div class="p-4 border border-yellow-200 bg-yellow-50 rounded-xl">
+                    <label class="block text-xs font-bold text-yellow-700 uppercase">Yellow (Caution)</label>
+                    <input type="text" placeholder="Value range..." class="mt-2 w-full border-yellow-300 rounded-lg text-sm">
+                </div>
+                <div class="p-4 border border-red-200 bg-red-50 rounded-xl">
+                    <label class="block text-xs font-bold text-red-700 uppercase">Red (Critical)</label>
+                    <input type="text" placeholder="Value range..." class="mt-2 w-full border-red-300 rounded-lg text-sm">
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+            <button type="button" class="px-6 py-3 font-bold text-slate-500 hover:text-slate-700">Test Connection</button>
+            <button type="submit" class="px-10 py-3 bg-slate-900 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 transition-all">Create Widget</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

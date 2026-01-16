@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if data_source else 'Create' }} API Data Source{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1 class="h2">
+                    <i class="fas fa-cloud me-2"></i>
+                    {{ 'Edit' if data_source else 'Create' }} API Data Source
+                </h1>
+                <p class="text-muted">Connect to REST API endpoints with authentication</p>
+            </div>
+
+            <form method="post" id="apiForm">
+                {{ form.hidden_tag() }}
+
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Basic Information -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Name -->
+                                <div class="mb-3">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Reference -->
+                                <div class="mb-3">
+                                    {{ form.reference.label(class="form-label") }}
+                                    {{ form.reference(class="form-control") }}
+                                    <small class="text-muted">{{ form.reference.description }}</small>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="mb-3">
+                                    {{ form.description.label(class="form-label") }}
+                                    {{ form.description(class="form-control") }}
+                                </div>
+
+                                <!-- Tags -->
+                                <div class="mb-3">
+                                    {{ form.tags.label(class="form-label") }}
+                                    {{ form.tags(class="form-control") }}
+                                </div>
+
+                                <!-- Data Format -->
+                                <div class="mb-3">
+                                    {{ form.data_format.label(class="form-label") }}
+                                    {{ form.data_format(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- API Configuration -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>API Configuration</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- API Endpoint -->
+                                <div class="mb-3">
+                                    {{ form.api_endpoint.label(class="form-label") }}
+                                    {{ form.api_endpoint(class="form-control" + (" is-invalid" if form.api_endpoint.errors else "")) }}
+                                    {% if form.api_endpoint.errors %}
+                                        <div class="invalid-feedback">{{ form.api_endpoint.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <!-- HTTP Method -->
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.api_method.label(class="form-label") }}
+                                        {{ form.api_method(class="form-control") }}
+                                    </div>
+
+                                    <!-- Timeout -->
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.api_timeout.label(class="form-label") }}
+                                        {{ form.api_timeout(class="form-control") }}
+                                    </div>
+                                </div>
+
+                                <!-- Query Parameters -->
+                                <div class="mb-3">
+                                    {{ form.api_params.label(class="form-label") }}
+                                    {{ form.api_params(class="form-control font-monospace" + (" is-invalid" if form.api_params.errors else "")) }}
+                                    {% if form.api_params.errors %}
+                                        <div class="invalid-feedback">{{ form.api_params.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Custom Headers -->
+                                <div class="mb-3">
+                                    {{ form.api_headers.label(class="form-label") }}
+                                    {{ form.api_headers(class="form-control font-monospace" + (" is-invalid" if form.api_headers.errors else "")) }}
+                                    {% if form.api_headers.errors %}
+                                        <div class="invalid-feedback">{{ form.api_headers.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Request Body -->
+                                <div class="mb-3" id="bodyField" style="display: none;">
+                                    {{ form.api_body.label(class="form-label") }}
+                                    {{ form.api_body(class="form-control font-monospace") }}
+                                </div>
+
+                                <!-- Data Path -->
+                                <div class="mb-3">
+                                    {{ form.data_path.label(class="form-label") }}
+                                    {{ form.data_path(class="form-control") }}
+                                    <small class="text-muted">{{ form.data_path.description }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Authentication -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-lock me-2"></i>Authentication</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Auth Type -->
+                                <div class="mb-3">
+                                    {{ form.auth_type.label(class="form-label") }}
+                                    {{ form.auth_type(class="form-control") }}
+                                </div>
+
+                                <!-- Basic Auth Fields -->
+                                <div id="basicAuthFields" style="display: none;">
+                                    <div class="mb-3">
+                                        {{ form.auth_username.label(class="form-label") }}
+                                        {{ form.auth_username(class="form-control") }}
+                                    </div>
+                                    <div class="mb-3">
+                                        {{ form.auth_password.label(class="form-label") }}
+                                        {{ form.auth_password(class="form-control") }}
+                                    </div>
+                                </div>
+
+                                <!-- Token/API Key Field -->
+                                <div id="tokenField" style="display: none;">
+                                    <div class="mb-3">
+                                        {{ form.auth_token.label(class="form-label") }}
+                                        {{ form.auth_token(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Refresh Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-sync me-2"></i>Refresh Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Auto Refresh -->
+                                <div class="mb-3 form-check">
+                                    {{ form.auto_refresh(class="form-check-input") }}
+                                    {{ form.auto_refresh.label(class="form-check-label") }}
+                                    <small class="d-block text-muted">{{ form.auto_refresh.description }}</small>
+                                </div>
+
+                                <!-- Refresh Frequency -->
+                                <div class="mb-3" id="refreshFrequencyField">
+                                    {{ form.refresh_frequency.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.refresh_frequency(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                    <small class="text-muted">{{ form.refresh_frequency.description }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cache Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-hdd me-2"></i>Cache Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Cache Enabled -->
+                                <div class="mb-3 form-check">
+                                    {{ form.cache_enabled(class="form-check-input") }}
+                                    {{ form.cache_enabled.label(class="form-check-label") }}
+                                </div>
+
+                                <!-- Cache TTL -->
+                                <div class="mb-3" id="cacheTTLField">
+                                    {{ form.cache_ttl.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.cache_ttl(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                    <small class="text-muted">{{ form.cache_ttl.description }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Advanced Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Validation -->
+                                <div class="mb-3 form-check">
+                                    {{ form.validation_enabled(class="form-check-input") }}
+                                    {{ form.validation_enabled.label(class="form-check-label") }}
+                                </div>
+
+                                <!-- Alert on Failure -->
+                                <div class="mb-3 form-check">
+                                    {{ form.alert_on_failure(class="form-check-input") }}
+                                    {{ form.alert_on_failure.label(class="form-check-label") }}
+                                </div>
+
+                                <!-- Alert Threshold -->
+                                <div class="mb-3" id="alertThresholdField">
+                                    {{ form.alert_threshold.label(class="form-label") }}
+                                    {{ form.alert_threshold(class="form-control") }}
+                                </div>
+
+                                <!-- Active Status -->
+                                <div class="mb-3 form-check">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{ form.is_active.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('data_sources.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-info me-2" id="validateBtn">
+                                    <i class="fas fa-check-circle me-2"></i>Validate JSON
+                                </button>
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const authType = document.getElementById('auth_type');
+    const httpMethod = document.getElementById('api_method');
+    const autoRefresh = document.getElementById('auto_refresh');
+    const cacheEnabled = document.getElementById('cache_enabled');
+    const alertOnFailure = document.getElementById('alert_on_failure');
+
+    // Toggle auth fields based on type
+    function toggleAuthFields() {
+        const basicAuth = document.getElementById('basicAuthFields');
+        const tokenField = document.getElementById('tokenField');
+        
+        basicAuth.style.display = 'none';
+        tokenField.style.display = 'none';
+        
+        const authValue = authType.value;
+        
+        if (authValue === 'basic') {
+            basicAuth.style.display = 'block';
+        } else if (['bearer', 'api_key', 'query_param'].includes(authValue)) {
+            tokenField.style.display = 'block';
+        }
+    }
+
+    // Toggle body field for POST/PUT/PATCH
+    function toggleBodyField() {
+        const bodyField = document.getElementById('bodyField');
+        const method = httpMethod.value;
+        
+        if (['POST', 'PUT', 'PATCH'].includes(method)) {
+            bodyField.style.display = 'block';
+        } else {
+            bodyField.style.display = 'none';
+        }
+    }
+
+    // Toggle refresh frequency field
+    function toggleRefreshFields() {
+        const field = document.getElementById('refreshFrequencyField');
+        field.style.display = autoRefresh.checked ? 'block' : 'none';
+    }
+
+    // Toggle cache TTL field
+    function toggleCacheFields() {
+        const field = document.getElementById('cacheTTLField');
+        field.style.display = cacheEnabled.checked ? 'block' : 'none';
+    }
+
+    // Toggle alert threshold
+    function toggleAlertFields() {
+        const field = document.getElementById('alertThresholdField');
+        field.style.display = alertOnFailure.checked ? 'block' : 'none';
+    }
+
+    // Validate JSON fields
+    document.getElementById('validateBtn').addEventListener('click', function() {
+        const fields = ['api_params', 'api_headers', 'api_body'];
+        let isValid = true;
+        let errors = [];
+
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && field.value.trim()) {
+                try {
+                    JSON.parse(field.value);
+                    field.classList.remove('is-invalid');
+                    field.classList.add('is-valid');
+                } catch (e) {
+                    field.classList.remove('is-valid');
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                    errors.push(`${fieldId.replace('api_', '').replace('_', ' ')}: ${e.message}`);
+                }
+            }
+        });
+
+        if (isValid) {
+            alert('✓ All JSON fields are valid!');
+        } else {
+            alert('✗ JSON validation errors:\n' + errors.join('\n'));
+        }
+    });
+
+    // Event listeners
+    authType.addEventListener('change', toggleAuthFields);
+    httpMethod.addEventListener('change', toggleBodyField);
+    autoRefresh.addEventListener('change', toggleRefreshFields);
+    cacheEnabled.addEventListener('change', toggleCacheFields);
+    alertOnFailure.addEventListener('change', toggleAlertFields);
+
+    // Initial state
+    toggleAuthFields();
+    toggleBodyField();
+    toggleRefreshFields();
+    toggleCacheFields();
+    toggleAlertFields();
+});
+</script>
+
+<style>
+.font-monospace {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+</style>
+{% endblock %}

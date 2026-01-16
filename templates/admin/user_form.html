@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-8 py-8">
+
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-6">
+        {{ action }} User
+    </h1>
+
+    <form method="POST"
+          class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-6">
+        {{ form.hidden_tag() }}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{ form.first_name.label(class="text-sm font-semibold") }}
+            {{ form.first_name(class="rounded-lg border-slate-300") }}
+
+            {{ form.last_name.label(class="text-sm font-semibold") }}
+            {{ form.last_name(class="rounded-lg border-slate-300") }}
+
+            {{ form.email.label(class="text-sm font-semibold") }}
+            {{ form.email(class="rounded-lg border-slate-300") }}
+
+            {{ form.phone.label(class="text-sm font-semibold") }}
+            {{ form.phone(class="rounded-lg border-slate-300") }}
+
+            {{ form.organization.label(class="text-sm font-semibold") }}
+            {{ form.organization(class="rounded-lg border-slate-300") }}
+
+            {{ form.role.label(class="text-sm font-semibold") }}
+            {{ form.role(class="rounded-lg border-slate-300") }}
+        </div>
+
+        {% if form.password %}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {{ form.password.label(class="text-sm font-semibold") }}
+            {{ form.password(class="rounded-lg border-slate-300") }}
+
+            {{ form.password_confirm.label(class="text-sm font-semibold") }}
+            {{ form.password_confirm(class="rounded-lg border-slate-300") }}
+        </div>
+        {% endif %}
+
+        <div class="flex items-center gap-6">
+            {{ form.is_active() }} {{ form.is_active.label(class="text-sm") }}
+            {{ form.email_notifications() }} {{ form.email_notifications.label(class="text-sm") }}
+        </div>
+
+        <div class="flex justify-end gap-4 pt-6 border-t">
+            <a href="{{ url_for('admin.users') }}"
+               class="px-6 py-2 text-slate-600 font-semibold">
+                Cancel
+            </a>
+            {{ form.submit(class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl") }}
+        </div>
+
+    </form>
+</div>
+{% endblock %}

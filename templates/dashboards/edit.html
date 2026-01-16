@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-8 py-10">
+    <!-- Header -->
+    <div class="flex justify-between items-end mb-10">
+        <div>
+            <a href="{{ url_for('dashboards.view', id=dashboard.id) }}" class="text-blue-600 hover:text-blue-700 font-medium mb-2 inline-block">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+            <span class="text-blue-600 text-xs font-bold tracking-widest uppercase block mt-2">
+                Dashboard Configuration
+            </span>
+            <h1 class="text-4xl font-extrabold text-slate-900 mt-1">
+                {{ dashboard.name }}
+            </h1>
+        </div>
+
+        <div class="flex gap-3">
+            <form action="{{ url_for('dashboards.edit', id=dashboard.id) }}" method="POST" class="inline">
+                <input type="hidden" name="status" value="archived">
+                <button type="submit"
+                        onclick="return confirm('Are you sure you want to archive this dashboard?');"
+                        class="px-4 py-2 border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50">
+                    Archive Dashboard
+                </button>
+            </form>
+            <a href="{{ url_for('dashboards.view', id=dashboard.id) }}"
+               class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700">
+                View Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Layout & Widgets -->
+        <section class="lg:col-span-2 space-y-6">
+            <!-- Active Widgets -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-slate-800">
+                        Active Widgets & Layout
+                    </h2>
+                    <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                        {{ dashboard.dashboard_widgets|length }} widgets
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    {% if dashboard.dashboard_widgets %}
+                        {% for dw in dashboard.dashboard_widgets %}
+                        <div class="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-200 group hover:border-blue-300 transition">
+                            <div class="flex items-center flex-1">
+                                <div class="w-10 h-10 bg-white rounded-lg shadow-sm flex items-center justify-center mr-4">
+                                    <i class="fas fa-chart-{{ dw.widget.widget_type.value }} text-blue-500"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-slate-800">
+                                        {{ dw.widget.name }}
+                                    </p>
+                                    <p class="text-xs text-slate-500">
+                                        {{ dw.widget.widget_type.value|capitalize }} · 
+                                        Position: ({{ dw.position_x }}, {{ dw.position_y }}) · 
+                                        Size: {{ dw.width }}x{{ dw.height }}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <form action="{{ url_for('dashboards.remove_widget', dashboard_id=dashboard.id, widget_id=dw.widget.id) }}" 
+                                  method="POST"
+                                  onsubmit="return confirm('Remove this widget from the dashboard?');">
+                                <button type="submit"
+                                        class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition px-3 py-1 rounded hover:bg-red-50">
+                                    <i class="fas fa-times mr-1"></i>
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-12 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
+                            <i class="fas fa-chart-bar text-4xl text-slate-300 mb-3"></i>
+                            <p class="text-slate-500 font-medium">No widgets added yet</p>
+                            <p class="text-xs text-slate-400 mt-1">Add widgets using the form below</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Add Widget Form -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    Add Widget to Dashboard
+                </h2>
+
+                <form action="{{ url_for('dashboards.edit', id=dashboard.id) }}" method="POST" class="space-y-4">
+                    {{ add_widget_form.hidden_tag() }}
+
+                    <div class="space-y-2">
+                        <label for="widget" class="block text-sm font-semibold text-slate-700">
+                            Select Widget *
+                        </label>
+                        {{ add_widget_form.widget(class="w-full rounded-lg border-slate-300 focus:ring-blue-600 focus:border-blue-600") }}
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="position_x" class="block text-sm font-semibold text-slate-700">
+                                Position X
+                            </label>
+                            {{ add_widget_form.position_x(class="w-full rounded-lg border-slate-300") }}
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="position_y" class="block text-sm font-semibold text-slate-700">
+                                Position Y
+                            </label>
+                            {{ add_widget_form.position_y(class="w-full rounded-lg border-slate-300") }}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="width" class="block text-sm font-semibold text-slate-700">
+                                Width (columns)
+                            </label>
+                            {{ add_widget_form.width(class="w-full rounded-lg border-slate-300") }}
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="height" class="block text-sm font-semibold text-slate-700">
+                                Height (rows)
+                            </label>
+                            {{ add_widget_form.height(class="w-full rounded-lg border-slate-300") }}
+                        </div>
+                    </div>
+
+                    {{ add_widget_form.submit(class="w-full mt-4 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition") }}
+                </form>
+            </div>
+        </section>
+
+        <!-- Configuration Panel -->
+        <aside class="space-y-6">
+            <!-- Dashboard Info -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    Dashboard Info
+                </h2>
+
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Status</p>
+                        <p class="text-sm font-medium text-slate-800">
+                            {% if dashboard.is_active %}
+                                <span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>Active</span>
+                            {% else %}
+                                <span class="text-red-600"><i class="fas fa-times-circle mr-1"></i>Inactive</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Created</p>
+                        <p class="text-sm font-medium text-slate-800">
+                            {{ dashboard.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Created By</p>
+                        <p class="text-sm font-medium text-slate-800">
+                            {{ dashboard.created_by.full_name if dashboard.created_by else 'Unknown' }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">View Count</p>
+                        <p class="text-sm font-medium text-slate-800">
+                            {{ dashboard.view_count or 0 }} views
+                        </p>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Layout Type</p>
+                        <p class="text-sm font-medium text-slate-800 capitalize">
+                            {{ dashboard.layout_type }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Settings -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    Quick Settings
+                </h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                            Theme
+                        </label>
+                        <select class="w-full rounded-lg border-slate-300 text-sm" disabled>
+                            <option>{{ dashboard.theme|capitalize }}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                            Grid Columns
+                        </label>
+                        <input type="number" 
+                               value="{{ dashboard.columns }}" 
+                               class="w-full rounded-lg border-slate-300 text-sm" 
+                               disabled>
+                    </div>
+
+                    {% if dashboard.auto_refresh %}
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">
+                            Refresh Interval
+                        </label>
+                        <input type="text" 
+                               value="{{ dashboard.refresh_interval }}s" 
+                               class="w-full rounded-lg border-slate-300 text-sm" 
+                               disabled>
+                    </div>
+                    {% endif %}
+
+                    <div class="pt-3 border-t border-slate-200">
+                        <p class="text-xs text-slate-500 italic">
+                            To modify these settings, edit the dashboard configuration.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-bold text-slate-800 mb-4">
+                    Quick Actions
+                </h2>
+
+                <div class="space-y-2">
+                    <a href="{{ url_for('dashboards.view', id=dashboard.id) }}"
+                       class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-eye"></i>
+                        View Dashboard
+                    </a>
+
+                    <a href="{{ url_for('dashboards.export', id=dashboard.id, format='json') }}"
+                       class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white text-slate-700 font-medium rounded-lg border border-slate-300 hover:bg-slate-50 transition">
+                        <i class="fas fa-download"></i>
+                        Export Data
+                    </a>
+
+                    <form action="{{ url_for('dashboards.delete', id=dashboard.id) }}" 
+                          method="POST"
+                          onsubmit="return confirm('Are you sure you want to permanently delete this dashboard?');">
+                        <button type="submit"
+                                class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-white text-red-600 font-medium rounded-lg border border-red-300 hover:bg-red-50 transition">
+                            <i class="fas fa-trash"></i>
+                            Delete Dashboard
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="fixed bottom-4 right-4 z-50 space-y-2">
+            {% for category, message in messages %}
+            <div class="bg-white border-l-4 rounded-lg shadow-lg p-4 max-w-md
+                        {% if category == 'success' %}border-green-500{% elif category == 'danger' %}border-red-500{% else %}border-blue-500{% endif %}">
+                <div class="flex items-start">
+                    <i class="fas {% if category == 'success' %}fa-check-circle text-green-500{% elif category == 'danger' %}fa-exclamation-circle text-red-500{% else %}fa-info-circle text-blue-500{% endif %} mt-0.5 mr-3"></i>
+                    <p class="text-sm text-slate-700 font-medium">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+{% endblock %}

@@ -1,2 +1,5 @@
 venv/ 
-TransportDashboard.zip 
+TransportDashboard.zip
+*.env
+.env
+env

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Create Data Source{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1 class="h2">
+                    <i class="fas fa-plus-circle me-2"></i>Create Data Source
+                </h1>
+                <p class="text-muted">Choose how you want to connect your data</p>
+            </div>
+
+            <!-- Source Type Cards -->
+            <div class="row g-4">
+                <!-- API Data Source -->
+                <div class="col-md-6">
+                    <a href="{{ url_for('data_sources.create_api') }}" class="text-decoration-none">
+                        <div class="card source-type-card h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-cloud fa-4x text-primary"></i>
+                                </div>
+                                <h4 class="card-title">API Endpoint</h4>
+                                <p class="card-text text-muted">
+                                    Connect to REST APIs with support for authentication, 
+                                    custom headers, and automatic refresh
+                                </p>
+                                <div class="features mt-3">
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Auto-refresh
+                                    </small>
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Authentication
+                                    </small>
+                                    <small class="badge bg-light text-dark">
+                                        <i class="fas fa-check text-success"></i> Real-time
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-primary text-white text-center">
+                                <i class="fas fa-arrow-right me-2"></i>Connect API
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- File Upload -->
+                <div class="col-md-6">
+                    <a href="{{ url_for('data_sources.create_upload') }}" class="text-decoration-none">
+                        <div class="card source-type-card h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-upload fa-4x text-success"></i>
+                                </div>
+                                <h4 class="card-title">File Upload</h4>
+                                <p class="card-text text-muted">
+                                    Upload files from your computer. Supports CSV, Excel, 
+                                    JSON, Parquet, XML, and documents
+                                </p>
+                                <div class="features mt-3">
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Auto-detect format
+                                    </small>
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Schema inference
+                                    </small>
+                                    <small class="badge bg-light text-dark">
+                                        <i class="fas fa-check text-success"></i> Multiple formats
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-success text-white text-center">
+                                <i class="fas fa-arrow-right me-2"></i>Upload File
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- External Link -->
+                <div class="col-md-6">
+                    <a href="{{ url_for('data_sources.create_link') }}" class="text-decoration-none">
+                        <div class="card source-type-card h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-link fa-4x text-info"></i>
+                                </div>
+                                <h4 class="card-title">External Link</h4>
+                                <p class="card-text text-muted">
+                                    Connect to files hosted on external servers. 
+                                    Downloads and processes automatically
+                                </p>
+                                <div class="features mt-3">
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Auto-download
+                                    </small>
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Scheduled refresh
+                                    </small>
+                                    <small class="badge bg-light text-dark">
+                                        <i class="fas fa-check text-success"></i> Protected files
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-info text-white text-center">
+                                <i class="fas fa-arrow-right me-2"></i>Connect Link
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Database Connection -->
+                <div class="col-md-6">
+                    <a href="{{ url_for('data_sources.create_database') }}" class="text-decoration-none">
+                        <div class="card source-type-card h-100">
+                            <div class="card-body text-center p-4">
+                                <div class="icon-wrapper mb-3">
+                                    <i class="fas fa-database fa-4x text-warning"></i>
+                                </div>
+                                <h4 class="card-title">Database</h4>
+                                <p class="card-text text-muted">
+                                    Connect directly to databases. Supports PostgreSQL, 
+                                    MySQL, SQL Server, Oracle, and SQLite
+                                </p>
+                                <div class="features mt-3">
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> SQL queries
+                                    </small>
+                                    <small class="badge bg-light text-dark me-1">
+                                        <i class="fas fa-check text-success"></i> Secure connection
+                                    </small>
+                                    <small class="badge bg-light text-dark">
+                                        <i class="fas fa-check text-success"></i> Live data
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-warning text-white text-center">
+                                <i class="fas fa-arrow-right me-2"></i>Connect Database
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-4">
+                <a href="{{ url_for('data_sources.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Data Sources
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.source-type-card {
+    transition: all 0.3s ease;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.source-type-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    border-color: var(--bs-primary);
+}
+
+.icon-wrapper {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.source-type-card .card-footer {
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.source-type-card:hover .card-footer {
+    padding: 1rem 1.25rem;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,270 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 p-6">
+    <!-- Dashboard Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 space-y-4 md:space-y-0">
+        <div>
+            <a href="{{ url_for('dashboards.index') }}" class="text-blue-600 hover:text-blue-700 font-medium mb-2 inline-block">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboards
+            </a>
+            <div class="flex items-center space-x-2 mb-1 mt-2">
+                {% if dashboard.auto_refresh %}
+                <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-green-600 uppercase tracking-widest">
+                    Auto-Refresh Active ({{ dashboard.refresh_interval }}s)
+                </span>
+                {% else %}
+                <span class="w-3 h-3 rounded-full bg-slate-400"></span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    Manual Refresh
+                </span>
+                {% endif %}
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">
+                {{ dashboard.name }}
+            </h1>
+            <p class="text-slate-500 font-medium">
+                {{ dashboard.description or 'Dashboard View' }}
+            </p>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <!-- Refresh Button -->
+            <button onclick="window.location.reload()" 
+                    class="bg-white text-slate-700 px-4 py-2 rounded-xl font-medium border border-slate-200 hover:bg-slate-100 shadow-sm transition-all flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+
+            <!-- Export Dropdown -->
+            <div class="relative group">
+                <button class="bg-white text-slate-700 px-4 py-2 rounded-xl font-medium border border-slate-200 hover:bg-slate-100 shadow-sm transition-all flex items-center gap-2">
+                    <i class="fas fa-download"></i>
+                    Export
+                    <i class="fas fa-chevron-down text-xs"></i>
+                </button>
+                <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 hidden group-hover:block z-10">
+                    <a href="{{ url_for('dashboards.export', id=dashboard.id, format='json') }}" 
+                       class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-t-lg">
+                        <i class="fas fa-file-code mr-2"></i>JSON Data
+                    </a>
+                    <a href="{{ url_for('dashboards.export', id=dashboard.id, format='csv') }}" 
+                       class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">
+                        <i class="fas fa-file-csv mr-2"></i>CSV Export
+                    </a>
+                    <a href="{{ url_for('dashboards.export', id=dashboard.id, format='pdf') }}" 
+                       class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-b-lg">
+                        <i class="fas fa-file-pdf mr-2"></i>PDF Report
+                    </a>
+                </div>
+            </div>
+
+            <!-- Edit Button -->
+            <a href="{{ url_for('dashboards.edit', id=dashboard.id) }}"
+               class="bg-blue-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-blue-700 shadow-lg transition-all flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit
+            </a>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <p class="text-xs font-bold text-slate-500 uppercase">Total Widgets</p>
+            <h3 class="text-2xl font-black text-slate-900">{{ dashboard.dashboard_widgets.count() }}</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <p class="text-xs font-bold text-slate-500 uppercase">View Count</p>
+            <h3 class="text-2xl font-black text-slate-900">{{ dashboard.view_count or 0 }}</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <p class="text-xs font-bold text-slate-500 uppercase">Layout</p>
+            <h3 class="text-lg font-black text-slate-900 capitalize">{{ dashboard.layout_type }}</h3>
+        </div>
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+            <p class="text-xs font-bold text-slate-500 uppercase">Theme</p>
+            <h3 class="text-lg font-black text-slate-900 capitalize">{{ dashboard.theme }}</h3>
+        </div>
+    </div>
+
+    <!-- Widgets Grid -->
+    {% if widgets_data and widgets_data.count() > 0 %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-{{ dashboard.columns // 4 or 3 }} gap-{{ dashboard.gap // 5 or 6 }}">
+            {% for item in widgets_data %}
+            {% set widget = item.widget %}
+            {% set data = item.data %}
+            
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden hover:scale-[1.01] transition-transform"
+                 style=`grid-column: span {{ item.dashboard_widget.width // 4 or 1 }}; grid-row: span {{ (item.dashboard_widget.height + 1) // 2 or 1 }};`>
+                
+                <!-- Widget Header -->
+                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-md flex items-center justify-center">
+                            <i class="fas fa-chart-{{ widget.widget_type.value }} text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800">{{ widget.name }}</h4>
+                            {% if widget.subtitle %}
+                            <p class="text-xs text-slate-500">{{ widget.subtitle }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-full font-bold text-slate-500 uppercase">
+                        {{ widget.widget_type.value }}
+                    </span>
+                </div>
+
+                <!-- Widget Content -->
+                <div class="p-6 bg-slate-50/50" style=`min-height: {{ dashboard.row_height * item.dashboard_widget.height }}px;`>
+                    {% if data %}
+                        <!-- KPI Display -->
+                        {% if widget.show_kpi and data.kpi %}
+                        <div class="text-center mb-4">
+                            <p class="text-4xl font-black text-slate-900">
+                                {{ data.kpi.value }}
+                            </p>
+                            {% if data.kpi.change %}
+                            <p class="text-sm font-semibold {{ 'text-green-600' if data.kpi.change > 0 else 'text-red-600' }}">
+                                <i class="fas fa-arrow-{{ 'up' if data.kpi.change > 0 else 'down' }}"></i>
+                                {{ data.kpi.change }}%
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Data Table -->
+                        {% if widget.widget_type.value in ['table', 'list'] and data.records %}
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        {% if data.records[0] %}
+                                            {% for key in data.records[0].keys() %}
+                                            <th class="text-left py-2 px-3 font-semibold text-slate-700">
+                                                {{ key|title }}
+                                            </th>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in data.records[:10] %}
+                                    <tr class="border-b border-slate-100 hover:bg-white">
+                                        {% for value in record.values() %}
+                                        <td class="py-2 px-3 text-slate-600">{{ value }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if data.records|length > 10 %}
+                            <p class="text-xs text-slate-400 mt-2 text-center">
+                                Showing 10 of {{ data.records|length }} records
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Chart Placeholder -->
+                        {% if widget.widget_type.value in ['bar', 'line', 'pie', 'area'] %}
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <i class="fas fa-chart-{{ widget.widget_type.value }} text-6xl text-slate-300 mb-3"></i>
+                                <p class="text-sm font-medium text-slate-500">
+                                    {{ widget.widget_type.value|title }} Chart
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    {{ data.records|length if data.records else 0 }} data points
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Metric/Number Display -->
+                        {% if widget.widget_type.value == 'metric' and data.value %}
+                        <div class="text-center py-8">
+                            <p class="text-5xl font-black text-slate-900 mb-2">
+                                {{ data.value }}
+                            </p>
+                            {% if data.label %}
+                            <p class="text-sm text-slate-500 font-medium">
+                                {{ data.label }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                    {% else %}
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <i class="fas fa-exclamation-circle text-4xl text-slate-300 mb-3"></i>
+                                <p class="text-sm text-slate-500">No data available</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Widget Footer -->
+                <div class="px-6 py-4 bg-slate-50 flex justify-between items-center border-t border-slate-100">
+                    <span class="text-xs font-bold text-slate-400">
+                        <i class="fas fa-database mr-1"></i>
+                        {{ widget.data_source.name }}
+                    </span>
+                    <span class="text-xs text-slate-400">
+                        <i class="fas fa-clock mr-1"></i>
+                        Just now
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Empty State -->
+        <div class="max-w-2xl mx-auto mt-20">
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-200 p-12 text-center">
+                <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-chart-bar text-4xl text-slate-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">No Widgets Configured</h2>
+                <p class="text-slate-600 mb-8">
+                    Add widgets to this dashboard to start visualizing your data.
+                </p>
+                <a href="{{ url_for('dashboards.edit', id=dashboard.id) }}"
+                   class="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-plus"></i>
+                    Add Widgets
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Auto-refresh Script -->
+{% if dashboard.auto_refresh %}
+<script>
+    setTimeout(function() {
+        window.location.reload();
+    }, `{{ dashboard.refresh_interval * 1000 }}`);
+</script>
+{% endif %}
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="fixed bottom-4 right-4 z-50 space-y-2">
+            {% for category, message in messages %}
+            <div class="bg-white border-l-4 rounded-lg shadow-lg p-4 max-w-md
+                        {% if category == 'success' %}border-green-500{% elif category == 'danger' %}border-red-500{% else %}border-blue-500{% endif %}">
+                <div class="flex items-start">
+                    <i class="fas {% if category == 'success' %}fa-check-circle text-green-500{% elif category == 'danger' %}fa-exclamation-circle text-red-500{% else %}fa-info-circle text-blue-500{% endif %} mt-0.5 mr-3"></i>
+                    <p class="text-sm text-slate-700 font-medium">{{ message }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+{% endblock %}

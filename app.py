@@ -1,651 +1,642 @@
-from flask import Flask, jsonify, render_template, send_file
+"""
+Kenya Transport Sector - Unified Analytics Platform
+Enterprise-grade Flask application with comprehensive security and analytics
+
+Built by: Nerdware Technologies
+Architecture: God-Level Production-Ready System
+"""
+
+from flask import Flask
 from flask_cors import CORS
-from datetime import datetime
-import pandas as pd
-import pickle
-from pathlib import Path
-import io
+from flask_migrate import Migrate
+import os
 import logging
-import numpy as np
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# ============================================================================
+# APPLICATION FACTORY
+# ============================================================================
 
-# Flask setup
-app = Flask(__name__)
-CORS(app)
-
-# Load pre-processed DataFrames from pickle file
-PICKLE_FILE = Path("data/transport_tables_2019_2023.pkl")
-
-try:
-    with open(PICKLE_FILE, 'rb') as f:
-        DATA = pickle.load(f)
-    logger.info(f"Successfully loaded {len(DATA)} DataFrames from pickle file")
-    logger.info(f"Available DataFrames: {list(DATA.keys())}")
-except Exception as e:
-    logger.error(f"Failed to load pickle file: {e}")
-    DATA = {}
-
-# Data processing helpers
-def safe_divide(numerator, denominator, default=0):
-    """Safely divide two numbers, returning default if denominator is 0"""
-    try:
-        if denominator and denominator != 0:
-            return numerator / denominator
-        return default
-    except:
-        return default
-
-def get_latest_year(df):
-    """Extract the latest year from DataFrame columns"""
-    # Handle different DataFrame structures
-    if 'Year' in df.columns:
-        # For DataFrames with Year column
-        if not df['Year'].empty:
-            return int(df['Year'].max())
+def create_app(config_name='default'):
+    """
+    Application factory pattern for creating Flask app instances
     
-    # For DataFrames with year columns (2019, 2020, etc.)
-    year_cols = []
-    for col in df.columns:
-        if isinstance(col, (int, float)):
-            year_cols.append(int(col))
-        elif isinstance(col, str) and col.isdigit():
-            year_cols.append(int(col))
+    Args:
+        config_name: Configuration environment (development, production, testing)
     
-    if year_cols:
-        return max(year_cols)
-    return 2023  # Default to 2023 if no year found
+    Returns:
+        Configured Flask application instance
+    """
+    # Initialize Flask app
+    app = Flask(__name__)
+    
+    # Load configuration
+    from config import config
+    app.config.from_object(config[config_name])
+    
+    # Jinja filters
+    from services.jinja_filters import format_number, timeago
+    app.jinja_env.filters['format_number'] = format_number
+    app.jinja_env.filters['timeago'] = timeago
 
-def extract_value(df, condition_col, condition_value, year_col=None):
-    """Extract value based on condition"""
-    try:
-        # If year_col is provided as int/string, use it directly
-        if year_col is not None:
-            if year_col not in df.columns and str(year_col) in df.columns:
-                year_col = str(year_col)
-            
-            if condition_col in df.columns and year_col in df.columns:
-                # Find rows matching condition
-                if condition_value is None:
-                    # Get first value if no condition
-                    value = df[year_col].iloc[0]
-                else:
-                    mask = df[condition_col].astype(str).str.contains(str(condition_value), case=False, na=False)
-                    if mask.any():
-                        value = df.loc[mask, year_col].values[0]
-                    else:
-                        return 0
-                
-                if pd.isna(value):
-                    return 0
-                
-                # Try to convert to float
-                try:
-                    return float(value)
-                except (ValueError, TypeError):
-                    # If it's a string with commas, remove them
-                    if isinstance(value, str):
-                        value = value.replace(',', '')
-                    try:
-                        return float(value)
-                    except:
-                        return 0
-        else:
-            # For DataFrames without year columns, get the last value
-            if condition_col in df.columns:
-                mask = df[condition_col].astype(str).str.contains(str(condition_value), case=False, na=False)
-                if mask.any():
-                    # Get the last numeric column
-                    numeric_cols = []
-                    for col in df.columns:
-                        if col != condition_col:
-                            try:
-                                # Try to convert to float
-                                _ = float(str(df[col].iloc[0]).replace(',', ''))
-                                numeric_cols.append(col)
-                            except:
-                                pass
-                    
-                    if numeric_cols:
-                        # Sort columns and get the last one
-                        numeric_cols.sort()
-                        last_col = numeric_cols[-1]
-                        value = df.loc[mask, last_col].values[0]
-                        
-                        if pd.isna(value):
-                            return 0
-                        
-                        try:
-                            return float(str(value).replace(',', ''))
-                        except:
-                            return 0
-    except Exception as e:
-        logger.warning(f"Error extracting value: {e}")
-        return 0
-    return 0
+    # Initialize extensions
+    initialize_extensions(app)
+    
+    # Setup logging
+    setup_logging(app)
+    
+    # Register blueprints
+    register_blueprints(app)
+    
+    # Register error handlers
+    register_error_handlers(app)
+    
+    # Register context processors
+    register_context_processors(app)
+    
+    # Register CLI commands
+    register_cli_commands(app)
+    
+    # Log startup
+    app.logger.info('='*80)
+    app.logger.info('Kenya Transport Analytics Platform - Starting')
+    app.logger.info(f'Environment: {config_name}')
+    app.logger.info(f'Debug Mode: {app.debug}')
+    app.logger.info(f'Database: {app.config.get("SQLALCHEMY_DATABASE_URI", "Not configured")}')
+    app.logger.info('='*80)
+    
+    return app
 
-def sum_column(df, column_name):
-    """Safely sum a column"""
-    try:
-        if column_name in df.columns:
-            return df[column_name].sum()
-        return 0
-    except:
-        return 0
 
-# Transport Data Service (using pre-processed DataFrames)
-class TransportDataService:
+# ============================================================================
+# EXTENSION INITIALIZATION
+# ============================================================================
 
-    @staticmethod
-    def get_kpa_data():
-        """Get Kenya Ports Authority data"""
-        try:
-            df_traffic = DATA.get('mombasa_port')
-            df_containers = DATA.get('container_traffic')
-            
-            if df_traffic is None or df_containers is None:
-                raise ValueError("Required DataFrames not found")
-            
-            latest_year = get_latest_year(df_traffic)
-            year_str = str(latest_year)
-            
-            # Extract values from Mombasa Port data
-            grand_total = extract_value(df_traffic, 'Category', 'Grand Total', year_str)
-            container_traffic = extract_value(df_traffic, 'Category', 'Container Traffic', year_str)
-            turnaround = extract_value(df_traffic, 'Category', 'Ships Turnaround Time', year_str)
-            ships_docked = extract_value(df_traffic, 'Category', 'Ships Docking', year_str)
-            moves_per_hour = extract_value(df_traffic, 'Category', 'Avg Gross Moves Per Ship Per Hour', year_str)
-            
-            # Extract imports and exports
-            imports_total = extract_value(df_traffic, 'Category', 'Total Imports', year_str)
-            exports_total = extract_value(df_traffic, 'Category', 'Total Exports', year_str)
-            
-            # Extract transit traffic
-            transit_in = extract_value(df_traffic, 'Category', 'Imports - Of which: Transit In', year_str)
-            transit_out = extract_value(df_traffic, 'Category', 'Exports - Of which: Transit Out', year_str)
-            
-            # Monthly container trend
-            monthly_trend = []
-            if year_str in df_containers.columns:
-                for idx, row in df_containers.iterrows():
-                    month = str(row['Month'])
-                    if month != 'TOTAL' and month != 'Total' and pd.notna(month):
-                        containers = extract_value(df_containers, 'Month', month, year_str)
-                        monthly_trend.append({
-                            "month": month,
-                            "containers": containers / 1000  # Convert to K TEUs
-                        })
-            else:
-                # If no year column, use the last column
-                last_col = df_containers.columns[-1]
-                for idx, row in df_containers.iterrows():
-                    month = str(row['Month'])
-                    if month != 'TOTAL' and month != 'Total' and pd.notna(month):
-                        containers = float(row[last_col]) if pd.notna(row[last_col]) else 0
-                        monthly_trend.append({
-                            "month": month,
-                            "containers": containers / 1000  # Convert to K TEUs
-                        })
-            
-            # Summary statistics
-            summary_stats = {
-                "cargo_throughput": grand_total / 1000,  # Convert to M MT
-                "container_traffic": container_traffic / 1000000,  # Convert to M TEUs
-                "vessel_turnaround": turnaround,
-                "ships_docked": ships_docked,
-                "moves_per_hour": moves_per_hour,
-                "imports_total": imports_total,
-                "exports_total": exports_total,
-                "transit_total": transit_in + transit_out,
-                "year": latest_year
-            }
-            
-            return {
-                "summary": summary_stats,
-                "monthly_trend": monthly_trend,
-                "source": "KNBS Economic Survey 2024 – Tables 13.8 & 13.19",
-            }
-        except Exception as e:
-            logger.error(f"Error loading KPA data: {e}")
-            raise
+def initialize_extensions(app):
+    """Initialize Flask extensions"""
+    from models import db
+    from flask_login import LoginManager
+    from flask_bcrypt import Bcrypt
+    from services.cache_service import CacheService
+    
+    
+    # Database
+    db.init_app(app)
+    
+    # Migrations
+    migrate = Migrate(app, db)
 
-    @staticmethod
-    def get_rail_data():
-        """Get Kenya Railways Corporation data"""
-        try:
-            df_sgr = DATA.get('sgr_traffic')
-            df_mgr = DATA.get('mgr_traffic')
-            
-            if df_sgr is None or df_mgr is None:
-                raise ValueError("Required DataFrames not found")
-            
-            latest_year = get_latest_year(df_sgr)
-            year_str = str(latest_year)
-            
-            # SGR data - need to adjust column names
-            sgr_passengers = 0
-            sgr_cargo = 0
-            sgr_revenue = 0
-            
-            # Try different column names for SGR
-            passenger_cols = ['Passenger numbers', 'Passenger numbers (000)', 'Passenger']
-            cargo_cols = ['Tonnes', 'Tonnes (000)', 'Cargo']
-            revenue_cols = ['Revenue', 'Revenue (KSh Million)', 'Revenue (KSh)']
-            
-            for col in passenger_cols:
-                sgr_passengers = extract_value(df_sgr, 'Metric', col, year_str)
-                if sgr_passengers > 0:
-                    break
-            
-            for col in cargo_cols:
-                sgr_cargo = extract_value(df_sgr, 'Metric', col, year_str)
-                if sgr_cargo > 0:
-                    break
-            
-            for col in revenue_cols:
-                sgr_revenue = extract_value(df_sgr, 'Metric', col, year_str)
-                if sgr_revenue > 0:
-                    break
-            
-            # MGR data
-            mgr_passengers = extract_value(df_mgr, 'Metric', 'Passenger', year_str)
-            mgr_cargo = extract_value(df_mgr, 'Metric', 'Tonnes', year_str)
-            mgr_revenue = extract_value(df_mgr, 'Metric', 'Revenue (KSh Million)', year_str)
-            
-            # Get previous year data for growth calculation
-            prev_year = latest_year - 1
-            prev_year_str = str(prev_year)
-            
-            sgr_passengers_prev = extract_value(df_sgr, 'Metric', 'Passenger numbers', prev_year_str)
-            mgr_passengers_prev = extract_value(df_mgr, 'Metric', 'Passenger', prev_year_str)
-            sgr_cargo_prev = extract_value(df_sgr, 'Metric', 'Tonnes', prev_year_str)
-            mgr_cargo_prev = extract_value(df_mgr, 'Metric', 'Tonnes', prev_year_str)
-            
-            # Summary statistics
-            summary_stats = {
-                "total_passengers": sgr_passengers + mgr_passengers,
-                "total_cargo": sgr_cargo + mgr_cargo,
-                "total_revenue": sgr_revenue + mgr_revenue,
-                "sgr_passengers": sgr_passengers,
-                "sgr_cargo": sgr_cargo,
-                "sgr_revenue": sgr_revenue,
-                "mgr_passengers": mgr_passengers,
-                "mgr_cargo": mgr_cargo,
-                "mgr_revenue": mgr_revenue,
-                "passenger_growth": safe_divide(
-                    (sgr_passengers + mgr_passengers) - (sgr_passengers_prev + mgr_passengers_prev),
-                    sgr_passengers_prev + mgr_passengers_prev
-                ) * 100,
-                "cargo_growth": safe_divide(
-                    (sgr_cargo + mgr_cargo) - (sgr_cargo_prev + mgr_cargo_prev),
-                    sgr_cargo_prev + mgr_cargo_prev
-                ) * 100,
-                "year": latest_year
-            }
-            
-            return {
-                "sgr": {
-                    "passengers": sgr_passengers / 1000,  # Convert to thousands
-                    "cargo": sgr_cargo / 1000,  # Convert to thousands
-                    "revenue": sgr_revenue
-                },
-                "mgr": {
-                    "passengers": mgr_passengers / 1000,  # Convert to thousands
-                    "cargo": mgr_cargo / 1000,  # Convert to thousands
-                    "revenue": mgr_revenue
-                },
-                "combined": summary_stats,
-                "source": "KNBS Economic Survey 2024 – Table 13.7",
-            }
-        except Exception as e:
-            logger.error(f"Error loading rail data: {e}")
-            raise
+    
+    # Login Manager
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page.'
+    login_manager.login_message_category = 'warning'
+    
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        from models import User
+        return User.query.get(int(user_id))
+    
+    # Bcrypt
+    bcrypt = Bcrypt(app)
 
-    @staticmethod
-    def get_air_data():
-        """Get Kenya Aviation Authority data"""
-        try:
-            df_passengers = DATA.get('passenger_traffic')
-            df_cargo = DATA.get('cargo_mail')
-            df_movements = DATA.get('aircraft_movement')
-            
-            if df_passengers is None or df_cargo is None or df_movements is None:
-                raise ValueError("Required DataFrames not found")
-            
-            latest_year = get_latest_year(df_passengers)
-            
-            # Filter for latest year
-            df_passengers_latest = df_passengers[df_passengers['Year'] == latest_year]
-            df_cargo_latest = df_cargo[df_cargo['Year'] == latest_year]
-            
-            # Passenger data - sum across all categories
-            total_passengers = 0
-            if not df_passengers_latest.empty:
-                # Sum Total_Passenger_Traffic for Sub-Total and In Transit categories
-                domestic_mask = (df_passengers_latest['Category'] == 'Domestic') & (df_passengers_latest['Sub_Category'] == 'Sub-Total')
-                international_mask = (df_passengers_latest['Category'] == 'International') & (df_passengers_latest['Sub_Category'] == 'Sub-Total')
-                transit_mask = (df_passengers_latest['Category'] == 'Total') & (df_passengers_latest['Sub_Category'] == 'In Transit')
-                
-                domestic_total = df_passengers_latest.loc[domestic_mask, 'Total_Passenger_Traffic'].sum()
-                international_total = df_passengers_latest.loc[international_mask, 'Total_Passenger_Traffic'].sum()
-                in_transit = df_passengers_latest.loc[transit_mask, 'Total_Passenger_Traffic'].sum()
-                
-                total_passengers = domestic_total + international_total + in_transit
-            
-            # Cargo data - filter for Total category
-            total_cargo = 0
-            if not df_cargo_latest.empty:
-                total_mask = (df_cargo_latest['Category'] == 'Total')
-                total_cargo = df_cargo_latest.loc[total_mask, 'Cargo_Total'].sum()
-            
-            # Movement data
-            year_str = str(latest_year)
-            total_movements = extract_value(df_movements, 'Movement', 'Grand Total', year_str)
-            domestic_movements = extract_value(df_movements, 'Movement', 'Total', year_str)
-            # For domestic, need to filter by Type first
-            df_domestic = df_movements[df_movements['Type'] == 'Domestic']
-            df_international = df_movements[df_movements['Type'] == 'International']
-            domestic_movements = extract_value(df_domestic, 'Movement', 'Total', year_str)
-            international_movements = extract_value(df_international, 'Movement', 'Total', year_str)
-            
-            # Airport breakdown
-            jkia_passengers = df_passengers_latest['JKIA'].sum() if not df_passengers_latest.empty else 0
-            mia_passengers = df_passengers_latest['MIA'].sum() if not df_passengers_latest.empty else 0
-            other_airports_passengers = df_passengers_latest['Other_Airports'].sum() if not df_passengers_latest.empty else 0
-            
-            # Summary statistics
-            summary_stats = {
-                "total_passengers": total_passengers,
-                "domestic_passengers": domestic_total,
-                "international_passengers": international_total,
-                "transit_passengers": in_transit,
-                "total_cargo": total_cargo,
-                "total_movements": total_movements,
-                "domestic_movements": domestic_movements,
-                "international_movements": international_movements,
-                "jkia_passengers": jkia_passengers,
-                "mia_passengers": mia_passengers,
-                "other_airports_passengers": other_airports_passengers,
-                "year": latest_year
-            }
-            
-            return {
-                "passengers": {
-                    "total": total_passengers / 1000,  # Convert to millions
-                    "domestic": domestic_total / 1000,
-                    "international": international_total / 1000,
-                    "transit": in_transit / 1000
-                },
-                "cargo": {
-                    "total": total_cargo
-                },
-                "movements": {
-                    "total": total_movements,
-                    "domestic": domestic_movements,
-                    "international": international_movements
-                },
-                "airports": {
-                    "jkia": jkia_passengers / 1000,
-                    "mia": mia_passengers / 1000,
-                    "other": other_airports_passengers / 1000
-                },
-                "summary": summary_stats,
-                "source": "KNBS Economic Survey 2024 – Tables 13.12–13.14",
-            }
-        except Exception as e:
-            logger.error(f"Error loading air data: {e}")
-            raise
-
-    @staticmethod
-    def get_road_data():
-        """Get NTSA/KeNHA road transport data"""
-        try:
-            df_vehicles = DATA.get('vehicle_registration')
-            df_licenses = DATA.get('road_licenses')
-            df_accidents = DATA.get('road_accidents')
-            
-            if df_vehicles is None or df_licenses is None or df_accidents is None:
-                raise ValueError("Required DataFrames not found")
-            
-            latest_year = get_latest_year(df_vehicles)
-            year_str = str(latest_year)
-            
-            # Vehicle registration
-            total_vehicles = extract_value(df_vehicles, 'Vehicle_Type', 'Total Units Registered', year_str)
-            motor_vehicles = extract_value(df_vehicles, 'Vehicle_Type', 'Total Motor Vehicles', year_str)
-            motor_cycles = extract_value(df_vehicles, 'Vehicle_Type', 'Total Motor Cycles', year_str)
-            
-            # Licenses
-            psv_licenses = extract_value(df_licenses, 'Type', 'Total', year_str)
-            # Adjust for PSV Licenses category
-            df_psv = df_licenses[df_licenses['Category'] == 'PSV Licenses']
-            psv_licenses = extract_value(df_psv, 'Type', 'Total', year_str)
-            
-            df_driving = df_licenses[df_licenses['Category'] == 'Driving Licenses']
-            driving_licenses = extract_value(df_driving, 'Type', 'Total', year_str)
-            
-            # Accidents
-            total_accidents = extract_value(df_accidents, 'Category', 'Total Number of Reported Traffic Accidents', year_str)
-            fatalities = extract_value(df_accidents, 'Category', 'Of which: Killed', year_str)
-            injuries = extract_value(df_accidents, 'Category', 'Persons Killed or Injured', year_str)
-            serious_injuries = extract_value(df_accidents, 'Category', 'Of which: Seriously Injured', year_str)
-            slight_injuries = extract_value(df_accidents, 'Category', 'Of which: Slightly Injured', year_str)
-            
-            # Summary statistics
-            summary_stats = {
-                "total_vehicles": total_vehicles,
-                "motor_vehicles": motor_vehicles,
-                "motor_cycles": motor_cycles,
-                "psv_licenses": psv_licenses,
-                "driving_licenses": driving_licenses,
-                "total_accidents": total_accidents,
-                "fatalities": fatalities,
-                "total_injuries": injuries,
-                "serious_injuries": serious_injuries,
-                "slight_injuries": slight_injuries,
-                "fatality_rate": safe_divide(fatalities, total_accidents, 0) * 100,
-                "casualties_per_accident": safe_divide(injuries, total_accidents, 0),
-                "year": latest_year
-            }
-            
-            return {
-                "vehicles": {
-                    "total": total_vehicles / 1000000,  # Convert to millions
-                    "motor_vehicles": motor_vehicles / 1000,  # Convert to thousands
-                    "motor_cycles": motor_cycles / 1000  # Convert to thousands
-                },
-                "licenses": {
-                    "psv": psv_licenses,
-                    "driving": driving_licenses
-                },
-                "safety": summary_stats,
-                "source": "KNBS Economic Survey 2024 – Tables 13.4–13.6",
-            }
-        except Exception as e:
-            logger.error(f"Error loading road data: {e}")
-            raise
-
-    @staticmethod
-    def get_pipeline_data():
-        """Get Kenya Pipeline Company data"""
-        try:
-            df_pipeline = DATA.get('pipeline_throughput')
-            
-            if df_pipeline is None:
-                raise ValueError("Pipeline DataFrame not found")
-            
-            latest_year = get_latest_year(df_pipeline)
-            year_str = str(latest_year)
-            
-            # Extract values
-            grand_total = extract_value(df_pipeline, 'Category', 'Grand Total', year_str)
-            transit_total = extract_value(df_pipeline, 'Category', 'Transit - Sub-Total', year_str)
-            domestic_total = extract_value(df_pipeline, 'Category', 'Domestic Consumption - Sub-Total', year_str)
-            
-            # Product breakdown - need to filter by Transit_Domestic column
-            df_transit = df_pipeline[df_pipeline['Transit_Domestic'] == 'Transit']
-            df_domestic = df_pipeline[df_pipeline['Transit_Domestic'] == 'Domestic']
-            
-            motor_spirit_transit = extract_value(df_transit, 'Product_Type', 'Motor Spirit', year_str)
-            motor_spirit_domestic = extract_value(df_domestic, 'Product_Type', 'Motor Spirit', year_str)
-            motor_spirit = motor_spirit_transit + motor_spirit_domestic
-            
-            kerosene_transit = extract_value(df_transit, 'Product_Type', 'Kerosene', year_str)
-            kerosene_domestic = extract_value(df_domestic, 'Product_Type', 'Kerosene', year_str)
-            kerosene = kerosene_transit + kerosene_domestic
-            
-            light_diesel_transit = extract_value(df_transit, 'Product_Type', 'Light Diesel', year_str)
-            light_diesel_domestic = extract_value(df_domestic, 'Product_Type', 'Light Diesel', year_str)
-            light_diesel = light_diesel_transit + light_diesel_domestic
-            
-            jet_fuel_transit = extract_value(df_transit, 'Product_Type', 'Jet Fuel', year_str)
-            jet_fuel_domestic = extract_value(df_domestic, 'Product_Type', 'Jet Fuel', year_str)
-            jet_fuel = jet_fuel_transit + jet_fuel_domestic
-            
-            # Get previous year for growth calculation
-            prev_year = latest_year - 1
-            prev_year_str = str(prev_year)
-            grand_total_prev = extract_value(df_pipeline, 'Category', 'Grand Total', prev_year_str)
-            
-            # Summary statistics
-            summary_stats = {
-                "total_throughput": grand_total,
-                "transit": transit_total,
-                "domestic": domestic_total,
-                "transit_percentage": safe_divide(transit_total, grand_total, 0) * 100,
-                "domestic_percentage": safe_divide(domestic_total, grand_total, 0) * 100,
-                "motor_spirit": motor_spirit,
-                "kerosene": kerosene,
-                "light_diesel": light_diesel,
-                "jet_fuel": jet_fuel,
-                "growth_rate": safe_divide(grand_total - grand_total_prev, grand_total_prev, 0) * 100,
-                "year": latest_year
-            }
-            
-            return {
-                "operations": {
-                    "throughput": grand_total / 1000,  # Convert to thousands
-                    "transit": transit_total / 1000,
-                    "domestic": domestic_total / 1000,
-                    "transit_percentage": summary_stats["transit_percentage"],
-                    "domestic_percentage": summary_stats["domestic_percentage"]
-                },
-                "products": {
-                    "motor_spirit": motor_spirit / 1000,
-                    "kerosene": kerosene / 1000,
-                    "light_diesel": light_diesel / 1000,
-                    "jet_fuel": jet_fuel / 1000
-                },
-                "summary": summary_stats,
-                "source": "KNBS Economic Survey 2024 – Table 13.11",
-            }
-        except Exception as e:
-            logger.error(f"Error loading pipeline data: {e}")
-            raise
-
-# API endpoints
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/api/overview")
-def get_overview():
-    try:
-        kpa = TransportDataService.get_kpa_data()
-        rail = TransportDataService.get_rail_data()
-        air = TransportDataService.get_air_data()
-        road = TransportDataService.get_road_data()
-        pipeline = TransportDataService.get_pipeline_data()
-
-        overview = {
-            "sea": {
-                "cargo_throughput": kpa["summary"]["cargo_throughput"],
-                "container_traffic": kpa["summary"]["container_traffic"],
-                "ships_docked": kpa["summary"]["ships_docked"],
-                "year": kpa["summary"].get("year", 2023)
-            },
-            "rail": {
-                "total_passengers": rail["combined"]["total_passengers"] / 1000,  # Already in thousands, convert to proper units
-                "total_cargo": rail["combined"]["total_cargo"] / 1000,  # Already in thousands, convert to proper units
-                "total_revenue": rail["combined"]["total_revenue"],
-                "year": rail["combined"].get("year", 2023)
-            },
-            "air": {
-                "total_passengers": air["passengers"]["total"],
-                "total_freight": air["cargo"]["total"],
-                "flight_movements": air["movements"]["total"],
-                "year": air["summary"].get("year", 2023)
-            },
-            "road": {
-                "total_vehicles": road["vehicles"]["total"],
-                "psv_licenses": road["licenses"]["psv"],
-                "road_fatalities": road["safety"]["fatalities"],
-                "total_accidents": road["safety"]["total_accidents"],
-                "year": road["safety"].get("year", 2023)
-            },
-            "pipeline": {
-                "throughput": pipeline["operations"]["throughput"],
-                "domestic_consumption": pipeline["operations"]["domestic"],
-                "transit_percentage": pipeline["operations"]["transit_percentage"],
-                "year": pipeline["summary"].get("year", 2023)
-            },
-            "sources": {
-                "sea": kpa.get("source", ""),
-                "rail": rail.get("source", ""),
-                "air": air.get("source", ""),
-                "road": road.get("source", ""),
-                "pipeline": pipeline.get("source", "")
-            }
+    cache_service_instance = CacheService()
+    cache_service_instance.init_app(app)
+    app.cache = cache_service_instance
+    
+    # CORS
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": app.config.get('CORS_ORIGINS', '*'),
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
         }
-
-        return jsonify({
-            "success": True,
-            "data": overview,
-            "timestamp": datetime.now().isoformat()
-        })
-
-    except Exception as e:
-        logger.error(f"Error in overview endpoint: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route("/api/<mode>")
-def get_mode(mode):
-    try:
-        services = {
-            "kpa": TransportDataService.get_kpa_data,
-            "rail": TransportDataService.get_rail_data,
-            "air": TransportDataService.get_air_data,
-            "road": TransportDataService.get_road_data,
-            "pipeline": TransportDataService.get_pipeline_data,
-        }
-
-        if mode not in services:
-            return jsonify({"success": False, "error": "Invalid mode"}), 400
-
-        data = services[mode]()
-        return jsonify({
-            "success": True,
-            "data": data,
-            "timestamp": datetime.now().isoformat()
-        })
-
-    except Exception as e:
-        logger.error(f"Error in {mode} endpoint: {e}")
-        return jsonify({"success": False, "error": str(e)}), 500
-
-@app.route("/api/health")
-def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        "status": "healthy",
-        "dataframes_loaded": len(DATA),
-        "available_dataframes": list(DATA.keys()),
-        "timestamp": datetime.now().isoformat()
     })
+    
+    # Store extensions on app for easy access
+    app.db = db
+    app.login_manager = login_manager
+    app.bcrypt = bcrypt
+    
+    app.logger.info('Extensions initialized successfully')
 
-# Run the Flask app
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+
+# ============================================================================
+# BLUEPRINT REGISTRATION
+# ============================================================================
+
+def register_blueprints(app):
+    """Register all application blueprints"""
+    from blueprints import (
+        auth_bp, main_bp, admin_bp, data_sources_bp,
+        widgets_bp, dashboards_bp, api_bp, profile_bp
+    )
+    
+    # Register blueprints with their URL prefixes
+    blueprints = [
+        (auth_bp, '/auth'),
+        (main_bp, '/'),
+        (admin_bp, '/admin'),
+        (data_sources_bp, '/data-sources'),
+        (widgets_bp, '/widgets'),
+        (dashboards_bp, '/dashboards'),
+        (api_bp, '/api'),
+        (profile_bp, '/profile')
+    ]
+    
+    for blueprint, url_prefix in blueprints:
+        app.register_blueprint(blueprint, url_prefix=url_prefix)
+        app.logger.info(f'Registered blueprint: {blueprint.name} at {url_prefix}')
+
+
+# ============================================================================
+# ERROR HANDLERS
+# ============================================================================
+
+def register_error_handlers(app):
+    """Register error handlers for common HTTP errors"""
+    from flask import render_template, jsonify, request
+    
+    @app.errorhandler(403)
+    def forbidden(error):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'success': False,
+                'error': 'Forbidden',
+                'message': 'You do not have permission to access this resource'
+            }), 403
+        return render_template('errors/403.html'), 403
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'success': False,
+                'error': 'Not Found',
+                'message': 'The requested resource was not found'
+            }), 404
+        return render_template('errors/404.html'), 404
+    
+    @app.errorhandler(500)
+    def internal_error(error):
+        from models import db
+        db.session.rollback()
+        
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'success': False,
+                'error': 'Internal Server Error',
+                'message': 'An unexpected error occurred'
+            }), 500
+        return render_template('errors/500.html'), 500
+    
+    @app.errorhandler(429)
+    def rate_limit_exceeded(error):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                'success': False,
+                'error': 'Too Many Requests',
+                'message': 'Rate limit exceeded. Please try again later.'
+            }), 429
+        return render_template('errors/429.html'), 429
+    
+    app.logger.info('Error handlers registered')
+
+
+# ============================================================================
+# CONTEXT PROCESSORS
+# ============================================================================
+
+def register_context_processors(app):
+    """Register context processors for templates"""
+    from flask_login import current_user
+    from models import Notification
+    
+    @app.context_processor
+    def inject_globals():
+        """Inject global variables into all templates"""
+        unread_notifications = 0
+        if current_user.is_authenticated:
+            unread_notifications = Notification.query.filter_by(
+                user_id=current_user.id,
+                is_read=False
+            ).count()
+        
+        return {
+            'app_name': 'Kenya Transport Analytics',
+            'app_version': '1.0.0',
+            'current_year': datetime.utcnow().year,
+            'unread_notifications': unread_notifications,
+            'debug_mode': app.debug
+        }
+    
+    app.logger.info('Context processors registered')
+
+
+# ============================================================================
+# CLI COMMANDS
+# ============================================================================
+
+def register_cli_commands(app):
+    """Register custom CLI commands"""
+    import click
+    from models import db
+
+    @app.cli.command("fix-db")
+    def fix_database():
+        """Fix database schema issues"""
+        print("Checking database schema...")
+        
+        # Check permissions table
+        from sqlalchemy import inspect, text
+        inspector = inspect(db.engine)
+        
+        if 'permissions' not in inspector.get_table_names():
+            print("Permissions table doesn't exist. Creating all tables...")
+            db.create_all()
+            print("✓ Tables created")
+        else:
+            columns = {col['name'] for col in inspector.get_columns('permissions')}
+            print(f"Current permissions columns: {columns}")
+            
+            # Check for missing columns
+            missing = {'module', 'is_system', 'is_active', 'display_order', 'created_at', 'updated_at'} - columns
+            
+            if missing:
+                print(f"Missing columns: {missing}")
+                print("Dropping and recreating permissions table...")
+                
+                # Backup data if needed
+                try:
+                    # Read existing permissions
+                    result = db.session.execute(text("SELECT * FROM permissions"))
+                    existing_data = result.fetchall()
+                    print(f"Found {len(existing_data)} existing permissions")
+                except:
+                    existing_data = []
+                
+                # Drop and recreate
+                db.session.execute(text("DROP TABLE IF EXISTS permissions"))
+                db.session.commit()
+                
+                # Recreate table
+                from models.permission import Permission
+                db.create_all()
+                
+                print("✓ Permissions table recreated with correct schema")
+                
+                # Note: You'll need to re-run flask init-db to populate default permissions
+            else:
+                print("✓ Permissions table schema is correct")
+        
+        print("Database fix completed!")
+
+    # In app.py, modify the reset_db command:
+    @app.cli.command("reset-db")
+    def reset_db():
+        """Drop and recreate all tables"""
+        from sqlalchemy import text, inspect
+        
+        print("Dropping all tables with CASCADE...")
+        
+        try:
+            # Get all table names
+            inspector = inspect(db.engine)
+            tables = inspector.get_table_names()
+            
+            # Disable foreign key checks (PostgreSQL specific)
+            db.session.execute(text('SET session_replication_role = replica;'))
+            
+            # Drop all tables
+            for table in tables:
+                print(f"Dropping table: {table}")
+                db.session.execute(text(f'DROP TABLE IF EXISTS "{table}" CASCADE;'))
+            
+            db.session.commit()
+            
+            # Re-enable foreign key checks
+            db.session.execute(text('SET session_replication_role = DEFAULT;'))
+            
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error: {e}")
+            # Fallback to SQLAlchemy's drop_all with cascade
+            with db.engine.connect() as conn:
+                trans = conn.begin()
+                try:
+                    conn.execute(text('DROP SCHEMA public CASCADE;'))
+                    conn.execute(text('CREATE SCHEMA public;'))
+                    trans.commit()
+                except:
+                    trans.rollback()
+                    raise
+        
+        print("Creating all tables...")
+        db.create_all()
+        print("✓ Database reset complete")
+    
+    @app.cli.command('init-db')
+    def init_db():
+        """Initialize the database with tables and default data"""
+        click.echo('Creating database tables...')
+        db.create_all()
+        click.echo('✓ Database tables created')
+        
+        click.echo('Creating default permissions...')
+        from models.permission import create_default_permissions
+        create_default_permissions()
+        click.echo('✓ Default permissions created')
+        
+        click.echo('Creating default roles...')
+        from models.permission import create_default_roles
+        create_default_roles()
+        click.echo('✓ Default roles created')
+        
+        click.echo('Creating system organization...')
+        from models import Organization
+        system_org = Organization.query.filter_by(code='SYSTEM').first()
+        if not system_org:
+            system_org = Organization(
+                name='System',
+                code='SYSTEM',
+                org_type='System',
+                description='System organization',
+                is_active=True
+            )
+            db.session.add(system_org)
+            db.session.commit()
+            click.echo('✓ System organization created')
+        else:
+            click.echo('✓ System organization already exists')
+        
+        click.echo('Creating admin user...')
+        from models import User, Role
+        admin_user = User.query.filter_by(email='admin@transport.go.ke').first()
+        if not admin_user:
+            admin_role = Role.query.filter_by(code='super_admin').first()
+            admin_user = User(
+                email='admin@transport.go.ke',
+                first_name='System',
+                last_name='Administrator',
+                organization_id=system_org.id,
+                role_id=admin_role.id,
+                is_active=True,
+                is_superuser=True
+            )
+            admin_user.set_password('ChangeMe123!')
+            db.session.add(admin_user)
+            db.session.commit()
+            
+            click.echo('')
+            click.echo('='*60)
+            click.echo('DEFAULT ADMIN CREATED')
+            click.echo('Email: admin@transport.go.ke')
+            click.echo('Password: ChangeMe123!')
+            click.echo('⚠️  PLEASE CHANGE THIS PASSWORD IMMEDIATELY!')
+            click.echo('='*60)
+            click.echo('')
+        else:
+            click.echo('✓ Admin user already exists')
+        
+        click.echo('\n✅ Database initialization complete!')
+    
+    @app.cli.command('create-org')
+    @click.argument('name')
+    @click.argument('code')
+    @click.option('--type', default='Transport Authority', help='Organization type')
+    def create_org(name, code, type):
+        """Create a new organization"""
+        from models import Organization
+        
+        org = Organization.query.filter_by(code=code.upper()).first()
+        if org:
+            click.echo(f'❌ Organization with code {code} already exists')
+            return
+        
+        org = Organization(
+            name=name,
+            code=code.upper(),
+            org_type=type,
+            is_active=True
+        )
+        db.session.add(org)
+        db.session.commit()
+        
+        click.echo(f'✅ Organization "{name}" ({code}) created successfully!')
+    
+    @app.cli.command('create-user')
+    @click.argument('email')
+    @click.argument('password')
+    @click.option('--first-name', prompt='First name')
+    @click.option('--last-name', prompt='Last name')
+    @click.option('--org-code', prompt='Organization code')
+    @click.option('--role-code', default='analyst', help='Role code')
+    def create_user(email, password, first_name, last_name, org_code, role_code):
+        """Create a new user"""
+        from models import User, Organization, Role
+        
+        user = User.query.filter_by(email=email.lower()).first()
+        if user:
+            click.echo(f'❌ User with email {email} already exists')
+            return
+        
+        org = Organization.query.filter_by(code=org_code.upper()).first()
+        if not org:
+            click.echo(f'❌ Organization with code {org_code} not found')
+            return
+        
+        role = Role.query.filter_by(code=role_code).first()
+        if not role:
+            click.echo(f'❌ Role with code {role_code} not found')
+            return
+        
+        user = User(
+            email=email.lower(),
+            first_name=first_name,
+            last_name=last_name,
+            organization_id=org.id,
+            role_id=role.id,
+            is_active=True
+        )
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        
+        click.echo(f'✅ User "{email}" created successfully!')
+    
+    @app.cli.command('reset-password')
+    @click.argument('email')
+    @click.argument('new_password')
+    def reset_password(email, new_password):
+        """Reset user password"""
+        from models import User
+        
+        user = User.query.filter_by(email=email.lower()).first()
+        if not user:
+            click.echo(f'❌ User with email {email} not found')
+            return
+        
+        user.set_password(new_password)
+        db.session.commit()
+        
+        click.echo(f'✅ Password reset successfully for {email}')
+    
+    @app.cli.command('list-users')
+    @click.option('--org-code', help='Filter by organization code')
+    def list_users(org_code):
+        """List all users"""
+        from models import User, Organization
+        
+        query = User.query
+        if org_code:
+            org = Organization.query.filter_by(code=org_code.upper()).first()
+            if not org:
+                click.echo(f'❌ Organization with code {org_code} not found')
+                return
+            query = query.filter_by(organization_id=org.id)
+        
+        users = query.all()
+        
+        if not users:
+            click.echo('No users found')
+            return
+        
+        click.echo(f'\nFound {len(users)} user(s):\n')
+        click.echo(f'{"ID":<5} {"Email":<30} {"Name":<30} {"Organization":<20} {"Status":<10}')
+        click.echo('-' * 100)
+        
+        for user in users:
+            status = 'Active' if user.is_active else 'Inactive'
+            org_name = user.organization.code if user.organization else 'N/A'
+            click.echo(f'{user.id:<5} {user.email:<30} {user.full_name:<30} {org_name:<20} {status:<10}')
+    
+    @app.cli.command('cleanup')
+    def cleanup():
+        """Clean up expired notifications and sessions"""
+        from services import NotificationService
+        
+        click.echo('Cleaning up expired notifications...')
+        count = NotificationService.cleanup_expired()
+        click.echo(f'✓ Removed {count} expired notifications')
+        
+        click.echo('\n✅ Cleanup complete!')
+    
+    app.logger.info('CLI commands registered')
+
+
+# ============================================================================
+# LOGGING CONFIGURATION
+# ============================================================================
+
+def setup_logging(app):
+    """Configure application logging"""
+    if not app.debug:
+        # Create logs directory if it doesn't exist
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        
+        # File handler for general logs
+        file_handler = RotatingFileHandler(
+            'logs/transport_analytics.log',
+            maxBytes=10240000,  # 10MB
+            backupCount=10
+        )
+        file_handler.setFormatter(logging.Formatter(
+            '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+        ))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        
+        # File handler for errors
+        error_handler = RotatingFileHandler(
+            'logs/errors.log',
+            maxBytes=10240000,
+            backupCount=10
+        )
+        error_handler.setFormatter(logging.Formatter(
+            '[%(asctime)s] %(levelname)s in %(module)s: %(message)s\n'
+            'Path: %(pathname)s:%(lineno)d\n'
+            '%(message)s\n'
+        ))
+        error_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(error_handler)
+        
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('Logging configured')
+
+
+# ============================================================================
+# APPLICATION INSTANCE
+# ============================================================================
+
+# Create application instance
+app = create_app(os.getenv('FLASK_ENV', 'development'))
+
+
+# ============================================================================
+# SHELL CONTEXT
+# ============================================================================
+
+@app.shell_context_processor
+def make_shell_context():
+    """
+    Make models available in Flask shell
+    Usage: flask shell
+    """
+    from models import (
+        db, Organization, User, Role, Permission,
+        DataSource, Widget, Dashboard, DashboardWidget,
+        AuditLog, Notification, APIKey, DataRefreshLog
+    )
+    from services import (
+        AuthService, DataFetcher, WidgetProcessor,
+        NotificationService, ReportService, cache_service
+    )
+    
+    return {
+        'db': db,
+        'Organization': Organization,
+        'User': User,
+        'Role': Role,
+        'Permission': Permission,
+        'DataSource': DataSource,
+        'Widget': Widget,
+        'Dashboard': Dashboard,
+        'DashboardWidget': DashboardWidget,
+        'AuditLog': AuditLog,
+        'Notification': Notification,
+        'APIKey': APIKey,
+        'DataRefreshLog': DataRefreshLog,
+        'AuthService': AuthService,
+        'DataFetcher': DataFetcher,
+        'WidgetProcessor': WidgetProcessor,
+        'NotificationService': NotificationService,
+        'ReportService': ReportService,
+        'cache': cache_service
+    }
+
+# ============================================================================
+# MAIN ENTRY POINT
+# ============================================================================
+
+if __name__ == '__main__':
+    # Development server configuration
+    port = int(os.environ.get('PORT', 5000))
+    host = os.environ.get('HOST', '0.0.0.0')
+    debug = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    
+    app.logger.info(f'Starting development server on {host}:{port}')
+    app.logger.info(f'Debug mode: {debug}')
+    app.logger.info('Press CTRL+C to quit')
+    
+    app.run(
+        host=host,
+        port=port,
+        debug=debug,
+        use_reloader=debug,
+        threaded=True
+    )

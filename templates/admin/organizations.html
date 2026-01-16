@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-8 py-8">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Organizations</h1>
+            <p class="text-slate-600 mt-1">
+                Manage registered agencies and their system access.
+            </p>
+        </div>
+
+        <a href="{{ url_for('admin.create_organization') }}"
+           class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700">
+            + New Organization
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 border-b">
+                <tr class="text-left text-slate-500 uppercase tracking-wider text-xs">
+                    <th class="p-4">Name</th>
+                    <th class="p-4">Code</th>
+                    <th class="p-4">Type</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for org in organizations %}
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4 font-semibold text-slate-800">{{ org.name }}</td>
+                    <td class="p-4 font-mono text-xs">{{ org.code }}</td>
+                    <td class="p-4">{{ org.org_type }}</td>
+                    <td class="p-4">
+                        {% if org.is_active %}
+                            <span class="text-green-600 font-semibold">Active</span>
+                        {% else %}
+                            <span class="text-red-600 font-semibold">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-right space-x-3">
+                        <a href="{{ url_for('admin.edit_organization', id=org.id) }}"
+                           class="text-blue-600 font-medium hover:underline">
+                            Edit
+                        </a>
+                        <form action="{{ url_for('admin.delete_organization', id=org.id) }}"
+                              method="POST"
+                              class="inline"
+                              onsubmit="return confirm('Delete this organization?');">
+                            <button class="text-red-600 font-medium hover:underline">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

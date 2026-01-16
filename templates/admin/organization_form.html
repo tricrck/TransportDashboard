@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-8 py-8">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-900">
+            {{ action }} Organization
+        </h1>
+        <p class="text-slate-600 mt-1">
+            Configure organization profile, branding, and system limits.
+        </p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data"
+          class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-8">
+        {{ form.hidden_tag() }}
+
+        <!-- Identity -->
+        <section>
+            <h2 class="font-bold text-slate-800 mb-4">Identity</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{ form.name.label(class="text-sm font-semibold") }}
+                {{ form.name(class="rounded-lg border-slate-300") }}
+
+                {{ form.code.label(class="text-sm font-semibold") }}
+                {{ form.code(class="rounded-lg border-slate-300") }}
+
+                {{ form.org_type.label(class="text-sm font-semibold") }}
+                {{ form.org_type(class="rounded-lg border-slate-300") }}
+            </div>
+        </section>
+
+        <!-- Description -->
+        <section>
+            <h2 class="font-bold text-slate-800 mb-4">Profile</h2>
+            {{ form.description.label(class="text-sm font-semibold") }}
+            {{ form.description(class="rounded-lg border-slate-300") }}
+
+            {{ form.mission.label(class="text-sm font-semibold mt-4") }}
+            {{ form.mission(class="rounded-lg border-slate-300") }}
+
+            {{ form.vision.label(class="text-sm font-semibold mt-4") }}
+            {{ form.vision(class="rounded-lg border-slate-300") }}
+        </section>
+
+        <!-- Limits -->
+        <section>
+            <h2 class="font-bold text-slate-800 mb-4">Subscription & Limits</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{ form.subscription_tier.label(class="text-sm font-semibold") }}
+                {{ form.subscription_tier(class="rounded-lg border-slate-300") }}
+
+                {{ form.max_users.label(class="text-sm font-semibold") }}
+                {{ form.max_users(class="rounded-lg border-slate-300") }}
+
+                {{ form.max_dashboards.label(class="text-sm font-semibold") }}
+                {{ form.max_dashboards(class="rounded-lg border-slate-300") }}
+            </div>
+        </section>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-4 pt-6 border-t">
+            <a href="{{ url_for('admin.organizations') }}"
+               class="px-6 py-2 text-slate-600 font-semibold">
+                Cancel
+            </a>
+            {{ form.submit(class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow hover:bg-blue-700") }}
+        </div>
+
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!-- This template follows the "Add Data Source" process, incorporating organization selection, source configuration (API, File, Query), and authentication methods. -->
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-slate-800">Register New Data Source</h1>
+        <p class="text-slate-600">Establish a reliable foundation for your transport analytics.</p>
+    </div>
+
+    <form action="{{ url_for('data_sources.create') }}" method="POST" class="space-y-6">
+        <!-- Identification Section -->
+        <div class="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Step 1: Identification</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Organization</label>
+                    <select name="org_id" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500" required>
+                        <option value="">Select Agency (e.g., KPA, KAA, NTSA)</option>
+                        {% for org in organizations %}
+                        <option value="{{ org.id }}">{{ org.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Source Name</label>
+                    <input type="text" name="name" placeholder="e.g., Vessel Turnaround Data" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm" required>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-slate-700">Reference (Optional)</label>
+                    <input type="text" name="reference" placeholder="Fast search identifier" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Section -->
+        <div class="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">Step 2: Source Configuration</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Source Type</label>
+                    <select name="type" id="sourceType" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                        <option value="api">API Connection</option>
+                        <option value="file">File Upload (CSV, JSON, XML)</option>
+                        <option value="query">Query Based</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Refresh Frequency</label>
+                    <select name="refresh_interval" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm">
+                        <option value="1s">Every Second</option>
+                        <option value="1m">Every Minute</option>
+                        <option value="1h">Every Hour</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dynamic Fields for API (Hidden/Shown via JS) -->
+            <div id="apiFields" class="mt-6 space-y-4">
+                <input type="url" name="endpoint" placeholder="API Endpoint URL" class="block w-full rounded-md border-slate-300 shadow-sm">
+                <select name="auth_method" class="block w-full rounded-md border-slate-300 shadow-sm">
+                    <option value="basic">Basic Auth (User/Pass)</option>
+                    <option value="bearer">Bearer Token</option>
+                    <option value="query">Query Parameter</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+            <button type="button" class="px-6 py-2 border rounded-lg text-slate-600 hover:bg-slate-50">Cancel</button>
+            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-lg transition-all">Create Data Source</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

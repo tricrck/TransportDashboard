@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+
+{% block title %}{{ data_source.name }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('data_sources.index') }}">Data Sources</a></li>
+                    <li class="breadcrumb-item active">{{ data_source.name }}</li>
+                </ol>
+            </nav>
+            
+            <h1 class="h2 mb-1">{{ data_source.name }}</h1>
+            
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-{{ 'success' if data_source.is_active else 'secondary' }}">
+                    {{ 'Active' if data_source.is_active else 'Inactive' }}
+                </span>
+                <span class="badge bg-info">
+                    {{ data_source.source_type.value.upper() }}
+                </span>
+                <span class="badge bg-primary">
+                    {{ data_source.data_format.value.upper() }}
+                </span>
+                <span class="health-badge health-{{ data_source.health_status }}" 
+                      data-bs-toggle="tooltip" 
+                      title="Health Status">
+                    <i class="fas fa-circle"></i> {{ data_source.health_status.title() }}
+                </span>
+            </div>
+            
+            {% if data_source.description %}
+            <p class="text-muted mt-2">{{ data_source.description }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-4 text-end">
+            <div class="btn-group">
+                {% if current_user.has_permission('test_data_source') %}
+                <button class="btn btn-warning" id="testBtn">
+                    <i class="fas fa-vial me-2"></i>Test
+                </button>
+                {% endif %}
+                
+                {% if current_user.has_permission('refresh_data_source') %}
+                <form method="post" action="{{ url_for('data_sources.refresh', id=data_source.id) }}" class="d-inline">
+                    <button type="submit" class="btn btn-info" {% if data_source.refresh_in_progress %}disabled{% endif %}>
+                        <i class="fas fa-sync{% if data_source.refresh_in_progress %} fa-spin{% endif %} me-2"></i>
+                        Refresh
+                    </button>
+                </form>
+                {% endif %}
+                
+                {% if current_user.has_permission('edit_data_source') %}
+                <a href="{{ url_for('data_sources.edit', id=data_source.id) }}" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>Edit
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-md-8">
+            <!-- Stats Overview -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-0">{{ data_source.record_count|default(0)|format_number }}</h3>
+                            <small class="text-muted">Records</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-0">{{ data_source.column_count|default(0) }}</h3>
+                            <small class="text-muted">Columns</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-0">{{ data_source.success_rate|round(1) }}%</h3>
+                            <small class="text-muted">Success Rate</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="mb-0">{{ data_source.widget_count }}</h3>
+                            <small class="text-muted">Widgets</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schema -->
+            {% if data_source.has_schema %}
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-table me-2"></i>Schema</h5>
+                    <div>
+                        <span class="badge bg-secondary">{{ data_source.column_count }} columns</span>
+                        {% if data_source.schema_inferred_at %}
+                        <small class="text-muted ms-2">
+                            Inferred {{ data_source.schema_inferred_at|timeago }}
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Column</th>
+                                    <th>Type</th>
+                                    <th>Nullable</th>
+                                    <th>Unique Values</th>
+                                    <th>Sample</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for col in data_source.schema['columns'][:20] %}
+                                <tr>
+                                    <td><code>{{ col.name }}</code></td>
+                                    <td><span class="badge bg-light text-dark">{{ col.type }}</span></td>
+                                    <td>
+                                        {% if col.nullable %}
+                                        <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                        <i class="fas fa-times text-danger"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ col.unique_count }}</td>
+                                    <td>
+                                        <small class="text-muted">
+                                            {{ col.sample_values[:3]|join(', ') }}
+                                        </small>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if data_source.column_count > 20 %}
+                    <div class="text-center p-2 bg-light">
+                        <small class="text-muted">Showing 20 of {{ data_source.column_count }} columns</small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('data_sources.preview_data', id=data_source.id) }}" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>Preview Data
+                        </a>
+                        {% if current_user.has_permission('edit_data_source') %}
+                        <button class="btn btn-sm btn-outline-secondary" id="inferSchemaBtn">
+                            <i class="fas fa-sync me-2"></i>Re-infer Schema
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4">
+                <div class="card-body text-center py-4">
+                    <i class="fas fa-table fa-3x text-muted mb-3"></i>
+                    <h5>No Schema Available</h5>
+                    <p class="text-muted">Schema will be inferred on first successful data fetch</p>
+                    {% if current_user.has_permission('edit_data_source') %}
+                    <button class="btn btn-primary" id="inferSchemaBtn">
+                        <i class="fas fa-magic me-2"></i>Infer Schema Now
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Sample Data -->
+            {% if data_source.sample_data %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-eye me-2"></i>Sample Data</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <tbody>
+                                {% for row in data_source.sample_data[:5] %}
+                                <tr>
+                                    <td><code>{{ loop.index }}</code></td>
+                                    <td>
+                                        <pre class="mb-0"><code>{{ row|tojson(indent=2) }}</code></pre>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Refresh History -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Refresh History</h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if refresh_logs %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Records</th>
+                                    <th>Duration</th>
+                                    <th>Trigger</th>
+                                    <th>Error</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in refresh_logs %}
+                                <tr>
+                                    <td>{{ log.started_at|timeago }}</td>
+                                    <td>
+                                        {% if log.status == 'success' %}
+                                        <span class="badge bg-success">Success</span>
+                                        {% elif log.status == 'error' %}
+                                        <span class="badge bg-danger">Error</span>
+                                        {% else %}
+                                        <span class="badge bg-warning">{{ log.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.records_fetched|default('-') }}</td>
+                                    <td>
+                                        {% if log.duration_ms %}
+                                        {{ log.duration_ms|round|int }}ms
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                    <td><small>{{ log.triggered_by }}</small></td>
+                                    <td>
+                                        {% if log.error_message %}
+                                        <small class="text-danger" data-bs-toggle="tooltip" title="{{ log.error_message }}">
+                                            {{ log.error_message[:50] }}...
+                                        </small>
+                                        {% else %}
+                                        -
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-4 text-muted">
+                        No refresh history available
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Widgets Using This Source -->
+            {% if widgets %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Widgets Using This Source</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for widget in widgets %}
+                        <a href="{{ url_for('widgets.view', id=widget.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ widget.name }}</h6>
+                                    <small class="text-muted">{{ widget.widget_type.value }}</small>
+                                </div>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-md-4">
+            <!-- Configuration -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Configuration</h5>
+                </div>
+                <div class="card-body">
+                    {% if data_source.source_type.value == 'api' %}
+                    <div class="mb-3">
+                        <small class="text-muted">Endpoint</small>
+                        <div><code>{{ data_source.api_endpoint }}</code></div>
+                    </div>
+                    <div class="mb-3">
+                        <small class="text-muted">Method</small>
+                        <div><span class="badge bg-primary">{{ data_source.api_method }}</span></div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data_source.file_path %}
+                    <div class="mb-3">
+                        <small class="text-muted">File</small>
+                        <div><code>{{ data_source.file_path|basename }}</code></div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data_source.file_url %}
+                    <div class="mb-3">
+                        <small class="text-muted">URL</small>
+                        <div><code>{{ data_source.file_url }}</code></div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data_source.reference %}
+                    <div class="mb-3">
+                        <small class="text-muted">Reference</small>
+                        <div><code>{{ data_source.reference }}</code></div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <small class="text-muted">Authentication</small>
+                        <div>{{ data_source.auth_type.value.replace('_', ' ').title() }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health & Performance -->
+            <div class="card mb-4" id="healthCard">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i>Health & Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Success Rate</small>
+                            <strong>{{ data_source.success_rate|round(1) }}%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-{{ 'success' if data_source.success_rate >= 80 else 'warning' if data_source.success_rate >= 50 else 'danger' }}" 
+                                 style=`width: {{ data_source.success_rate }}%`></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Uptime</small>
+                            <strong>{{ data_source.uptime_percentage|round(1) }}%</strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" 
+                                 style=`width: {{ data_source.uptime_percentage }}%`></div>
+                        </div>
+                    </div>
+
+                    {% if data_source.avg_response_time %}
+                    <div class="mb-3">
+                        <small class="text-muted">Response Time</small>
+                        <div class="d-flex justify-content-between mt-1">
+                            <small>Min: {{ data_source.min_response_time|round|int }}ms</small>
+                            <small>Avg: <strong>{{ data_source.avg_response_time|round|int }}ms</strong></small>
+                            <small>Max: {{ data_source.max_response_time|round|int }}ms</small>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="text-success">
+                                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                <div><strong>{{ data_source.success_count }}</strong></div>
+                                <small class="text-muted">Successes</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-danger">
+                                <i class="fas fa-times-circle fa-2x mb-2"></i>
+                                <div><strong>{{ data_source.error_count }}</strong></div>
+                                <small class="text-muted">Errors</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if data_source.consecutive_failures > 0 %}
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <small>
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            {{ data_source.consecutive_failures }} consecutive failures
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer text-center">
+                    <button class="btn btn-sm btn-outline-primary" id="refreshHealthBtn">
+                        <i class="fas fa-sync me-2"></i>Refresh Health
+                    </button>
+                </div>
+            </div>
+
+            <!-- Refresh Settings -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-sync me-2"></i>Refresh Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <small class="text-muted">Auto-Refresh</small>
+                        <div>
+                            {% if data_source.auto_refresh %}
+                            <span class="badge bg-success">Enabled</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Disabled</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if data_source.auto_refresh %}
+                    <div class="mb-3">
+                        <small class="text-muted">Frequency</small>
+                        <div>Every {{ data_source.refresh_frequency }} seconds</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <small class="text-muted">Last Refresh</small>
+                        <div>
+                            {% if data_source.last_refresh %}
+                            {{ data_source.last_refresh|timeago }}
+                            {% if data_source.last_refresh_status == 'success' %}
+                            <i class="fas fa-check-circle text-success"></i>
+                            {% else %}
+                            <i class="fas fa-times-circle text-danger"></i>
+                            {% endif %}
+                            {% else %}
+                            Never
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if data_source.next_refresh %}
+                    <div class="mb-3">
+                        <small class="text-muted">Next Refresh</small>
+                        <div>{{ data_source.next_refresh|timeago }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <small class="text-muted">Cache</small>
+                        <div>
+                            {% if data_source.cache_enabled %}
+                            <span class="badge bg-success">Enabled</span>
+                            <small class="text-muted">(TTL: {{ data_source.cache_ttl }}s)</small>
+                            {% else %}
+                            <span class="badge bg-secondary">Disabled</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('data_sources.preview_data', id=data_source.id) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>Preview Data
+                        </a>
+                        
+                        {% if current_user.has_permission('delete_data_source') %}
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="fas fa-trash me-2"></i>Delete Source
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Data Source</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ data_source.name }}</strong>?</p>
+                {% if widgets %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    This data source is used by {{ widgets|length }} widget(s).
+                </div>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" action="{{ url_for('data_sources.delete', id=data_source.id) }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Test connection
+document.getElementById('testBtn')?.addEventListener('click', async function() {
+    const btn = this;
+    const originalHtml = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Testing...';
+    
+    try {
+        const response = await fetch('{{ url_for("data_sources.test_connection", id=data_source.id) }}', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-success');
+            btn.innerHTML = '<i class="fas fa-check me-2"></i>Success';
+            
+            setTimeout(() => {
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-warning');
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }, 3000);
+        } else {
+            alert('Connection test failed: ' + result.message);
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    }
+});
+
+// Infer schema
+document.getElementById('inferSchemaBtn')?.addEventListener('click', async function() {
+    const btn = this;
+    const originalHtml = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Inferring...';
+    
+    try {
+        const response = await fetch('{{ url_for("data_sources.infer_schema", id=data_source.id) }}', {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Schema inference failed: ' + result.message);
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        alert('Error: ' + error.message);
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    }
+});
+
+// Refresh health
+document.getElementById('refreshHealthBtn')?.addEventListener('click', async function() {
+    const btn = this;
+    const originalHtml = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+    
+    try {
+        const response = await fetch('{{ url_for("data_sources.health_status", id=data_source.id) }}');
+        const health = await response.json();
+        
+        // Update health display
+        console.log('Health:', health);
+        
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        }, 1000);
+    } catch (error) {
+        console.error('Error:', error);
+        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+    }
+});
+
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+</script>
+
+<style>
+.health-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.health-healthy { background-color: #d4edda; color: #155724; }
+.health-degraded { background-color: #fff3cd; color: #856404; }
+.health-down { background-color: #f8d7da; color: #721c24; }
+.health-unknown { background-color: #e2e3e5; color: #383d41; }
+
+pre code {
+    font-size: 0.85rem;
+}
+</style>
+{% endblock %}

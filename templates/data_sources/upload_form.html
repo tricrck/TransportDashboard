@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Data Source{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Header -->
+            <div class="mb-4">
+                <h1 class="h2">
+                    <i class="fas fa-upload me-2"></i>Upload Data Source
+                </h1>
+                <p class="text-muted">Upload files with automatic format detection</p>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" id="uploadForm">
+                {{ form.hidden_tag() }}
+
+                <!-- File Upload Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-file-upload me-2"></i>File Upload</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- File Input -->
+                        <div class="mb-3">
+                            {{ form.file.label(class="form-label") }}
+                            <div class="file-drop-zone" id="dropZone">
+                                {{ form.file(class="form-control" + (" is-invalid" if form.file.errors else ""), id="fileInput") }}
+                                <div class="drop-zone-text">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                    <p>Drag & drop your file here or click to browse</p>
+                                    <small class="text-muted">
+                                        Supported: JSON, CSV, XML, Excel, Parquet, PDF, DOCX, TXT, HTML
+                                    </small>
+                                </div>
+                            </div>
+                            {% if form.file.errors %}
+                                <div class="invalid-feedback d-block">{{ form.file.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- File Preview -->
+                        <div id="filePreview" style="display: none;">
+                            <div class="alert alert-info">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file fa-2x me-3"></i>
+                                    <div>
+                                        <strong id="fileName"></strong>
+                                        <br>
+                                        <small id="fileSize"></small>
+                                    </div>
+                                    <button type="button" class="btn-close ms-auto" id="clearFile"></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Format -->
+                        <div class="mb-3">
+                            {{ form.data_format.label(class="form-label") }}
+                            {{ form.data_format(class="form-control") }}
+                            <small class="text-muted">Select "Auto-Detect" to automatically determine the format</small>
+                        </div>
+
+                        <!-- CSV Options -->
+                        <div id="csvOptions" style="display: none;">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-file-csv me-2"></i>CSV Options</h6>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            {{ form.csv_delimiter.label(class="form-label") }}
+                                            {{ form.csv_delimiter(class="form-control") }}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">&nbsp;</label>
+                                            <div class="form-check">
+                                                {{ form.csv_has_header(class="form-check-input") }}
+                                                {{ form.csv_has_header.label(class="form-check-label") }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Excel Options -->
+                        <div id="excelOptions" style="display: none;">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-file-excel me-2"></i>Excel Options</h6>
+                                    <div class="mb-3">
+                                        {{ form.excel_sheet_name.label(class="form-label") }}
+                                        {{ form.excel_sheet_name(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Name -->
+                        <div class="mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Reference -->
+                        <div class="mb-3">
+                            {{ form.reference.label(class="form-label") }}
+                            {{ form.reference(class="form-control") }}
+                            <small class="text-muted">{{ form.reference.description }}</small>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            {{ form.description.label(class="form-label") }}
+                            {{ form.description(class="form-control") }}
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            {{ form.tags.label(class="form-label") }}
+                            {{ form.tags(class="form-control") }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Cache Settings -->
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    {{ form.cache_enabled(class="form-check-input") }}
+                                    {{ form.cache_enabled.label(class="form-check-label") }}
+                                </div>
+
+                                <div class="mb-3" id="cacheTTLField">
+                                    {{ form.cache_ttl.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.cache_ttl(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                    <small class="text-muted">{{ form.cache_ttl.description }}</small>
+                                </div>
+                            </div>
+
+                            <!-- Validation & Status -->
+                            <div class="col-md-6">
+                                <div class="mb-3 form-check">
+                                    {{ form.validation_enabled(class="form-check-input") }}
+                                    {{ form.validation_enabled.label(class="form-check-label") }}
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{ form.is_active.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ url_for('data_sources.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-upload me-2"></i>{{ form.submit.label.text }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const filePreview = document.getElementById('filePreview');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const clearFile = document.getElementById('clearFile');
+    const dataFormat = document.getElementById('data_format');
+    const cacheEnabled = document.getElementById('cache_enabled');
+    const csvOptions = document.getElementById('csvOptions');
+    const excelOptions = document.getElementById('excelOptions');
+
+    // File drag and drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+            dropZone.classList.add('drag-over');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => {
+            dropZone.classList.remove('drag-over');
+        }, false);
+    });
+
+    dropZone.addEventListener('drop', function(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        handleFileSelect();
+    }, false);
+
+    fileInput.addEventListener('change', handleFileSelect);
+
+    function handleFileSelect() {
+        const file = fileInput.files[0];
+        if (file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            filePreview.style.display = 'block';
+
+            // Auto-detect format from extension
+            const ext = file.name.split('.').pop().toLowerCase();
+            const formatMap = {
+                'json': 'json',
+                'csv': 'csv',
+                'xml': 'xml',
+                'xlsx': 'excel',
+                'xls': 'excel',
+                'parquet': 'parquet',
+                'pdf': 'pdf',
+                'docx': 'docx',
+                'txt': 'txt',
+                'html': 'html'
+            };
+
+            if (formatMap[ext] && dataFormat.value === 'auto') {
+                // Suggest format but keep auto-detect selected
+                console.log('Detected format:', formatMap[ext]);
+            }
+        }
+    }
+
+    clearFile.addEventListener('click', function() {
+        fileInput.value = '';
+        filePreview.style.display = 'none';
+    });
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    // Toggle format-specific options
+    dataFormat.addEventListener('change', function() {
+        csvOptions.style.display = this.value === 'csv' ? 'block' : 'none';
+        excelOptions.style.display = this.value === 'excel' ? 'block' : 'none';
+    });
+
+    // Toggle cache TTL
+    cacheEnabled.addEventListener('change', function() {
+        document.getElementById('cacheTTLField').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Initial state
+    document.getElementById('cacheTTLField').style.display = cacheEnabled.checked ? 'block' : 'none';
+
+    // Form submission
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+    });
+});
+</script>
+
+<style>
+.file-drop-zone {
+    position: relative;
+    border: 3px dashed #ccc;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-drop-zone:hover,
+.file-drop-zone.drag-over {
+    border-color: #0d6efd;
+    background: #e7f1ff;
+}
+
+.file-drop-zone input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.drop-zone-text {
+    pointer-events: none;
+    color: #6c757d;
+}
+
+.file-drop-zone:hover .drop-zone-text {
+    color: #0d6efd;
+}
+</style>
+{% endblock %}

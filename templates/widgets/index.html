@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto p-6">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-900">Widget Library</h1>
+        <p class="text-slate-600 mt-2">
+            Manage, inspect, and configure available data visualization widgets.
+        </p>
+    </div>
+
+    {% if widgets %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for widget in widgets %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+            <!-- Widget Header -->
+            <div class="p-6 border-b border-slate-100">
+                <h2 class="text-lg font-bold text-slate-800">
+                    {{ widget.name }}
+                </h2>
+                <p class="text-sm text-slate-500">
+                    Type: {{ widget.type|capitalize }}
+                </p>
+            </div>
+
+            <!-- Widget Meta -->
+            <div class="p-6 space-y-3">
+                <p class="text-sm text-slate-600">
+                    <span class="font-semibold">Source:</span>
+                    {{ widget.data_source.name if widget.data_source else "N/A" }}
+                </p>
+
+                {% if widget.data_source %}
+                <p class="text-xs text-slate-400 font-mono">
+                    Refresh: {{ widget.data_source.refresh_interval }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="p-4 bg-slate-50 flex justify-between items-center">
+                <a href="{{ url_for('widgets.edit', id=widget.id) }}"
+                   class="text-blue-600 font-semibold text-sm hover:underline">
+                    Edit
+                </a>
+
+                <form action="{{ url_for('widgets.delete', id=widget.id) }}"
+                      method="POST"
+                      onsubmit="return confirm('Delete this widget?');">
+                    <button type="submit"
+                            class="text-red-600 text-sm font-semibold hover:underline">
+                        Delete
+                    </button>
+                </form>
+            </div>
+
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <div class="text-center text-slate-500 py-16">
+            No widgets available.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - Kenya Transport Analytics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Pulse animation for live indicators */
+        @keyframes pulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.5; 
+                transform: scale(1.1);
+            }
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    
+    {% include 'components/navbar.html' %}
+
+    <div class="flex">
+        {% if current_user.is_authenticated %}
+            {% include 'components/sidebar.html' %}
+        {% endif %}
+
+        <main class="flex-1 {% if current_user.is_authenticated %}lg:ml-72{% endif %} min-h-screen">
+            <div class="p-6 lg:p-8">
+                {% include 'components/alerts.html' %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <footer class="bg-white border-t border-gray-200 p-6 text-center text-sm text-gray-600 {% if current_user.is_authenticated %}lg:ml-72{% endif %}">
+        <div class="flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto gap-4">
+            <div>
+                &copy; {{ current_year }} <span class="font-semibold text-gray-900">Nerdware Technologies</span> | Kenya Transport Analytics Platform
+            </div>
+            <div class="flex items-center gap-4 text-xs">
+                <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full font-medium">v{{ app_version }}</span>
+                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Documentation</a>
+                <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main JavaScript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

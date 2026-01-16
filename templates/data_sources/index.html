@@ -1,0 +1,293 @@
+{% extends "base.html" %}
+
+{% block title %}Data Sources{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h2">
+                <i class="fas fa-database me-2"></i>Data Sources
+            </h1>
+            <p class="text-muted">Manage your data connections and feeds</p>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if current_user.has_permission('create_data_source') %}
+            <a href="{{ url_for('data_sources.create') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Data Source
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">All</option>
+                        <option value="active" {% if request.args.get('status') == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if request.args.get('status') == 'inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Type</label>
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="api" {% if request.args.get('type') == 'api' %}selected{% endif %}>API</option>
+                        <option value="upload" {% if request.args.get('type') == 'upload' %}selected{% endif %}>Upload</option>
+                        <option value="link" {% if request.args.get('type') == 'link' %}selected{% endif %}>Link</option>
+                        <option value="database" {% if request.args.get('type') == 'database' %}selected{% endif %}>Database</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Health</label>
+                    <select name="health" class="form-select">
+                        <option value="">All</option>
+                        <option value="healthy" {% if request.args.get('health') == 'healthy' %}selected{% endif %}>Healthy</option>
+                        <option value="degraded" {% if request.args.get('health') == 'degraded' %}selected{% endif %}>Degraded</option>
+                        <option value="down" {% if request.args.get('health') == 'down' %}selected{% endif %}>Down</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-secondary w-100">
+                        <i class="fas fa-filter me-2"></i>Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Data Sources Grid -->
+    {% if data_sources %}
+    <div class="row">
+        {% for ds in data_sources %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 data-source-card" data-id="{{ ds.id }}">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="badge bg-{{ 'success' if ds.is_active else 'secondary' }} me-2">
+                            {{ 'Active' if ds.is_active else 'Inactive' }}
+                        </span>
+                        <span class="badge bg-info">
+                            <i class="fas fa-{{ {
+                                'api': 'cloud',
+                                'upload': 'upload',
+                                'link': 'link',
+                                'database': 'database'
+                            }[ds.source_type.value] }}"></i>
+                            {{ ds.source_type.value.upper() }}
+                        </span>
+                    </div>
+                    <span class="health-indicator health-{{ ds.health_status }}" 
+                          data-bs-toggle="tooltip" 
+                          title="{{ ds.health_status.title() }}">
+                        <i class="fas fa-circle"></i>
+                    </span>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{{ url_for('data_sources.view', id=ds.id) }}" class="text-decoration-none">
+                            {{ ds.name }}
+                        </a>
+                    </h5>
+                    
+                    {% if ds.reference %}
+                    <p class="text-muted small mb-2">
+                        <code>{{ ds.reference }}</code>
+                    </p>
+                    {% endif %}
+                    
+                    {% if ds.description %}
+                    <p class="card-text small">{{ ds.description[:100] }}{% if ds.description|length > 100 %}...{% endif %}</p>
+                    {% endif %}
+                    
+                    <!-- Stats -->
+                    <div class="row g-2 mt-3">
+                        <div class="col-6">
+                            <div class="small text-muted">Format</div>
+                            <div class="fw-bold">{{ ds.data_format.value.upper() }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted">Records</div>
+                            <div class="fw-bold">{{ ds.record_count|default(0)|format_number }}</div>
+                        </div>
+                        {% if ds.has_schema %}
+                        <div class="col-6">
+                            <div class="small text-muted">Columns</div>
+                            <div class="fw-bold">{{ ds.column_count }}</div>
+                        </div>
+                        {% endif %}
+                        <div class="col-6">
+                            <div class="small text-muted">Widgets</div>
+                            <div class="fw-bold">{{ ds.widget_count }}</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance -->
+                    {% if ds.avg_response_time %}
+                    <div class="mt-3">
+                        <div class="small text-muted">Avg Response Time</div>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar bg-{{ 'success' if ds.avg_response_time < 1000 else 'warning' if ds.avg_response_time < 3000 else 'danger' }}" 
+                                 style=`width: {{ min(100, (ds.avg_response_time / 5000) * 100) }}%`></div>
+                        </div>
+                        <small>{{ ds.avg_response_time|round|int }}ms</small>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Last Refresh -->
+                    {% if ds.last_refresh %}
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="fas fa-sync me-1"></i>
+                            Last: {{ ds.last_refresh|timeago }}
+                            {% if ds.last_refresh_status == 'success' %}
+                            <span class="text-success"><i class="fas fa-check-circle"></i></span>
+                            {% else %}
+                            <span class="text-danger"><i class="fas fa-times-circle"></i></span>
+                            {% endif %}
+                        </small>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('data_sources.view', id=ds.id) }}" 
+                               class="btn btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if current_user.has_permission('test_data_source') %}
+                            <button class="btn btn-outline-warning test-connection" 
+                                    data-id="{{ ds.id }}">
+                                <i class="fas fa-vial"></i>
+                            </button>
+                            {% endif %}
+                            {% if current_user.has_permission('refresh_data_source') %}
+                            <form method="post" 
+                                  action="{{ url_for('data_sources.refresh', id=ds.id) }}" 
+                                  class="d-inline">
+                                <button type="submit" 
+                                        class="btn btn-outline-info"
+                                        {% if ds.refresh_in_progress %}disabled{% endif %}>
+                                    <i class="fas fa-sync{% if ds.refresh_in_progress %} fa-spin{% endif %}"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                        
+                        {% if current_user.has_permission('edit_data_source') %}
+                        <a href="{{ url_for('data_sources.edit', id=ds.id) }}" 
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-database fa-4x text-muted mb-3"></i>
+            <h4>No Data Sources Yet</h4>
+            <p class="text-muted">Create your first data source to get started</p>
+            {% if current_user.has_permission('create_data_source') %}
+            <a href="{{ url_for('data_sources.create') }}" class="btn btn-primary mt-3">
+                <i class="fas fa-plus me-2"></i>Add Data Source
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.data-source-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.data-source-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.health-indicator {
+    font-size: 0.75rem;
+}
+
+.health-healthy { color: #28a745; }
+.health-degraded { color: #ffc107; }
+.health-down { color: #dc3545; }
+.health-unknown { color: #6c757d; }
+</style>
+
+<script>
+// Test connection functionality
+document.querySelectorAll('.test-connection').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const dsId = this.dataset.id;
+        const originalHtml = this.innerHTML;
+        
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            const response = await fetch(`/data-sources/${dsId}/test`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                this.classList.remove('btn-outline-warning');
+                this.classList.add('btn-success');
+                this.innerHTML = '<i class="fas fa-check"></i>';
+                
+                setTimeout(() => {
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-warning');
+                    this.innerHTML = originalHtml;
+                    this.disabled = false;
+                }, 2000);
+            } else {
+                this.classList.remove('btn-outline-warning');
+                this.classList.add('btn-danger');
+                this.innerHTML = '<i class="fas fa-times"></i>';
+                
+                alert('Connection test failed: ' + result.message);
+                
+                setTimeout(() => {
+                    this.classList.remove('btn-danger');
+                    this.classList.add('btn-outline-warning');
+                    this.innerHTML = originalHtml;
+                    this.disabled = false;
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            this.innerHTML = originalHtml;
+            this.disabled = false;
+        }
+    });
+});
+
+// Initialize tooltips
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+});
+</script>
+{% endblock %}

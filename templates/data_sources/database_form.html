@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Create Database Connection{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="mb-4">
+                <h1 class="h2">
+                    <i class="fas fa-database me-2"></i>Create Database Connection
+                </h1>
+                <p class="text-muted">Connect to your database</p>
+            </div>
+
+            <form method="post">
+                {{ form.hidden_tag() }}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Database Configuration -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-server me-2"></i>Database Configuration</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.db_type.label(class="form-label") }}
+                                    {{ form.db_type(class="form-control") }}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        {{ form.db_host.label(class="form-label") }}
+                                        {{ form.db_host(class="form-control" + (" is-invalid" if form.db_host.errors else "")) }}
+                                        {% if form.db_host.errors %}
+                                            <div class="invalid-feedback">{{ form.db_host.errors[0] }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        {{ form.db_port.label(class="form-label") }}
+                                        {{ form.db_port(class="form-control") }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.db_name.label(class="form-label") }}
+                                    {{ form.db_name(class="form-control" + (" is-invalid" if form.db_name.errors else "")) }}
+                                    {% if form.db_name.errors %}
+                                        <div class="invalid-feedback">{{ form.db_name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.db_username.label(class="form-label") }}
+                                    {{ form.db_username(class="form-control" + (" is-invalid" if form.db_username.errors else "")) }}
+                                    {% if form.db_username.errors %}
+                                        <div class="invalid-feedback">{{ form.db_username.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.db_password.label(class="form-label") }}
+                                    {{ form.db_password(class="form-control" + (" is-invalid" if form.db_password.errors else "")) }}
+                                    {% if form.db_password.errors %}
+                                        <div class="invalid-feedback">{{ form.db_password.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.db_schema.label(class="form-label") }}
+                                        {{ form.db_schema(class="form-control") }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        {{ form.db_table.label(class="form-label") }}
+                                        {{ form.db_table(class="form-control") }}
+                                        <small class="text-muted">{{ form.db_table.description }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SQL Query -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-code me-2"></i>SQL Query</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.query_string.label(class="form-label") }}
+                                    {{ form.query_string(class="form-control font-monospace") }}
+                                    <small class="text-muted">{{ form.query_string.description }}</small>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <small>
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Leave blank to fetch entire table, or provide custom SQL query
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <!-- Basic Information -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Basic Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback">{{ form.name.errors[0] }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.reference.label(class="form-label") }}
+                                    {{ form.reference(class="form-control") }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.description.label(class="form-label") }}
+                                    {{ form.description(class="form-control") }}
+                                </div>
+
+                                <div class="mb-3">
+                                    {{ form.tags.label(class="form-label") }}
+                                    {{ form.tags(class="form-control") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Settings -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 form-check">
+                                    {{ form.auto_refresh(class="form-check-input") }}
+                                    {{ form.auto_refresh.label(class="form-check-label") }}
+                                </div>
+
+                                <div class="mb-3" id="refreshFreqField">
+                                    {{ form.refresh_frequency.label(class="form-label") }}
+                                    <div class="input-group">
+                                        {{ form.refresh_frequency(class="form-control") }}
+                                        <span class="input-group-text">seconds</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    {{ form.cache_enabled(class="form-check-input") }}
+                                    {{ form.cache_enabled.label(class="form-check-label") }}
+                                </div>
+
+                                <div class="mb-3 form-check">
+                                    {{ form.is_active(class="form-check-input") }}
+                                    {{ form.is_active.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Connection String Preview -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-link me-2"></i>Connection String</h5>
+                            </div>
+                            <div class="card-body">
+                                <code id="connString" class="d-block p-2 bg-light">
+                                    Will be generated from your inputs
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('data_sources.index') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <div>
+                                <button type="button" class="btn btn-outline-warning me-2" id="testBtn">
+                                    <i class="fas fa-vial me-2"></i>Test Connection
+                                </button>
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dbType = document.getElementById('db_type');
+    const dbHost = document.getElementById('db_host');
+    const dbPort = document.getElementById('db_port');
+    const dbName = document.getElementById('db_name');
+    const dbUsername = document.getElementById('db_username');
+    const connString = document.getElementById('connString');
+    const autoRefresh = document.getElementById('auto_refresh');
+
+    // Update default port based on database type
+    const portDefaults = {
+        'postgresql': 5432,
+        'mysql': 3306,
+        'mssql': 1433,
+        'oracle': 1521,
+        'sqlite': 0
+    };
+
+    dbType.addEventListener('change', function() {
+        if (portDefaults[this.value]) {
+            dbPort.value = portDefaults[this.value];
+        }
+        updateConnectionString();
+    });
+
+    // Update connection string preview
+    function updateConnectionString() {
+        const type = dbType.value;
+        const host = dbHost.value || 'localhost';
+        const port = dbPort.value || portDefaults[type];
+        const name = dbName.value || 'database';
+        const user = dbUsername.value || 'username';
+        
+        const str = `${type}://${user}:****@${host}:${port}/${name}`;
+        connString.textContent = str;
+    }
+
+    [dbType, dbHost, dbPort, dbName, dbUsername].forEach(el => {
+        el.addEventListener('input', updateConnectionString);
+    });
+
+    autoRefresh.addEventListener('change', function() {
+        document.getElementById('refreshFreqField').style.display = this.checked ? 'block' : 'none';
+    });
+
+    // Initial state
+    updateConnectionString();
+    document.getElementById('refreshFreqField').style.display = autoRefresh.checked ? 'block' : 'none';
+});
+</script>
+
+<style>
+.font-monospace {
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.9em;
+}
+</style>
+{% endblock %}

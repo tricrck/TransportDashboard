@@ -1,0 +1,106 @@
+<aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+    <!-- Sidebar Header -->
+    <div class="p-6 border-b border-gray-200 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/30">
+            <i class="fas fa-truck-moving"></i>
+        </div>
+        <div>
+            <h2 class="text-base font-bold text-gray-900 tracking-tight">Kenya Transport</h2>
+            <p class="text-xs text-gray-500 mt-0.5">Analytics Platform</p>
+        </div>
+    </div>
+    
+    <!-- Sidebar Menu -->
+    <nav class="p-4">
+        <!-- Main Section -->
+        <div class="mb-8">
+            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Main</div>
+            <a href="{{ url_for('main.dashboard') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md shadow-blue-500/25 mb-1">
+                <i class="fas fa-chart-line w-5 text-center"></i>
+                <span class="font-medium text-sm">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-chart-bar w-5 text-center"></i>
+                <span class="font-medium text-sm">Analytics</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-chart-pie w-5 text-center"></i>
+                <span class="font-medium text-sm">Reports</span>
+            </a>
+        </div>
+        
+        <!-- Data Management Section -->
+        <div class="mb-8">
+            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Data Management</div>
+            <a href="{{ url_for('data_sources.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-database w-5 text-center"></i>
+                <span class="font-medium text-sm">Data Sources</span>
+            </a>
+            <a href="{{ url_for('widgets.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-th w-5 text-center"></i>
+                <span class="font-medium text-sm">Widgets</span>
+            </a>
+            <a href="{{ url_for('dashboards.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-columns w-5 text-center"></i>
+                <span class="font-medium text-sm">Dashboards</span>
+            </a>
+        </div>
+        
+        <!-- Administration Section -->
+        {% if current_user.has_permission('view_users') %}
+        <div class="mb-8">
+            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Administration</div>
+            <a href="{{ url_for('admin.organizations') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-building w-5 text-center"></i>
+                <span class="font-medium text-sm">Organizations</span>
+            </a>
+            <a href="{{ url_for('admin.users') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-users w-5 text-center"></i>
+                <span class="font-medium text-sm">Users</span>
+            </a>
+            <a href="{{ url_for('admin.roles') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-user-shield w-5 text-center"></i>
+                <span class="font-medium text-sm">Roles & Permissions</span>
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- Account Section -->
+        <div class="mb-8">
+            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Account</div>
+            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-cog w-5 text-center"></i>
+                <span class="font-medium text-sm">Settings</span>
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
+                <i class="fas fa-sign-out-alt w-5 text-center"></i>
+                <span class="font-medium text-sm">Logout</span>
+            </a>
+        </div>
+    </nav>
+</aside>
+
+<!-- Overlay for mobile -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    
+    // Toggle sidebar on mobile
+    if (sidebarToggle) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        });
+    }
+    
+    // Close sidebar when clicking overlay
+    if (sidebarOverlay) {
+        sidebarOverlay.addEventListener('click', function() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        });
+    }
+</script>

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Setup Two-Factor Authentication - Kenya Transport Analytics{% endblock %}
+
+{% block breadcrumb %}
+<a href="{{ url_for('profile.settings') }}" class="text-gray-500 hover:text-gray-900">Settings</a>
+<i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+<span class="text-gray-900 font-medium">Setup 2FA</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-xl shadow-md border border-gray-100 p-6 mb-6">
+        <div class="flex items-center space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-2xl flex items-center justify-center">
+                <i class="fas fa-shield-alt text-white text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Secure Your Account</h1>
+                <p class="text-gray-600 mt-1">Enable two-factor authentication for enhanced security</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+        <div class="grid md:grid-cols-2 gap-8 p-8">
+            <!-- Left Column: QR Code -->
+            <div class="space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                            <span class="text-indigo-600 font-bold">1</span>
+                        </div>
+                        <h3 class="font-semibold text-lg text-gray-900">Scan QR Code</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Use an authenticator app to scan this QR code:
+                    </p>
+                    
+                    <!-- Authenticator App Options -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                        <p class="text-sm text-blue-900 font-medium mb-2">Recommended Apps:</p>
+                        <div class="space-y-2">
+                            <div class="flex items-center space-x-2 text-sm text-blue-800">
+                                <i class="fab fa-google text-lg"></i>
+                                <span>Google Authenticator</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-blue-800">
+                                <i class="fab fa-microsoft text-lg"></i>
+                                <span>Microsoft Authenticator</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm text-blue-800">
+                                <i class="fas fa-mobile-alt text-lg"></i>
+                                <span>Authy</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- QR Code Display -->
+                    <div class="bg-gray-50 p-6 rounded-lg border-2 border-dashed border-gray-300 flex justify-center">
+                        {% if qr_code %}
+                        <img src="data:image/png;base64,{{ qr_code }}" 
+                             alt="2FA QR Code" 
+                             class="w-56 h-56">
+                        {% else %}
+                        <div class="w-56 h-56 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-qrcode text-gray-400 text-6xl"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Manual Entry -->
+                    <div class="mt-4">
+                        <button 
+                            type="button"
+                            onclick="document.getElementById('manual-entry').classList.toggle('hidden')"
+                            class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">
+                            <i class="fas fa-keyboard mr-1"></i>Can't scan? Enter manually
+                        </button>
+                        
+                        <div id="manual-entry" class="hidden mt-3 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <p class="text-xs text-gray-600 mb-2">Secret Key:</p>
+                            <code class="block bg-white p-3 rounded border border-gray-300 text-sm font-mono break-all">
+                                {{ secret }}
+                            </code>
+                            <button 
+                                type="button"
+                                onclick="navigator.clipboard.writeText('{{ secret }}')"
+                                class="mt-2 text-xs text-indigo-600 hover:text-indigo-800">
+                                <i class="fas fa-copy mr-1"></i>Copy to clipboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Verification -->
+            <div class="space-y-6">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <span class="text-green-600 font-bold">2</span>
+                        </div>
+                        <h3 class="font-semibold text-lg text-gray-900">Verify Setup</h3>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-6">
+                        Enter the 6-digit code from your authenticator app to complete setup.
+                    </p>
+                    
+                    <!-- Verification Form -->
+                    <form method="POST" action="{{ url_for('auth.setup_2fa') }}">
+                        {{ form.hidden_tag() }}
+                        {{ form.secret() }}
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Verification Code
+                            </label>
+                            {{ form.token(
+                                class="w-full text-center text-3xl tracking-widest px-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none font-mono",
+                                placeholder="000000",
+                                maxlength="6",
+                                pattern="[0-9]{6}",
+                                autofocus=True
+                            ) }}
+                            {% if form.token.errors %}
+                                <p class="mt-2 text-sm text-red-600">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>{{ form.token.errors[0] }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold py-3 rounded-lg hover:from-green-600 hover:to-green-700 transition-all transform hover:scale-[1.02] shadow-lg">
+                            <i class="fas fa-check-circle mr-2"></i>Activate Two-Factor Authentication
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Boxes -->
+                <div class="space-y-4 mt-6">
+                    <!-- Benefits -->
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h4 class="font-medium text-green-900 mb-2 flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>Why enable 2FA?
+                        </h4>
+                        <ul class="text-sm text-green-800 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-shield-alt text-green-600 mr-2 mt-1"></i>
+                                <span>Adds an extra layer of security to your account</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-lock text-green-600 mr-2 mt-1"></i>
+                                <span>Protects against unauthorized access</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-user-shield text-green-600 mr-2 mt-1"></i>
+                                <span>Meets government security requirements</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Backup Codes Notice -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 class="font-medium text-yellow-900 mb-2 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>Important
+                        </h4>
+                        <p class="text-sm text-yellow-800">
+                            After enabling 2FA, you'll receive backup codes. 
+                            Save these in a secure location - they can be used if you lose access to your authenticator app.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="mt-6 bg-gray-50 rounded-lg p-6 border border-gray-200">
+        <h3 class="font-semibold text-gray-900 mb-3">Need Help?</h3>
+        <div class="grid md:grid-cols-2 gap-4 text-sm text-gray-600">
+            <div>
+                <p class="font-medium text-gray-900 mb-1">Lost your phone?</p>
+                <p>Contact your system administrator to reset 2FA.</p>
+            </div>
+            <div>
+                <p class="font-medium text-gray-900 mb-1">Having issues?</p>
+                <p>Make sure your device's time is set correctly.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-submit form when 6 digits entered
+    document.addEventListener('DOMContentLoaded', function() {
+        const tokenInput = document.querySelector('input[name="token"]');
+        if (tokenInput) {
+            tokenInput.addEventListener('input', function(e) {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Auto-submit when 6 digits entered
+                if (this.value.length === 6) {
+                    this.form.submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

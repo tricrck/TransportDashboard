@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-8 py-8">
+
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-900">Permissions</h1>
+        <p class="text-slate-600 mt-1">
+            System-level capabilities assigned to roles.
+        </p>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+            <thead class="bg-slate-50 border-b text-xs uppercase tracking-wider text-slate-500">
+                <tr>
+                    <th class="p-4">Name</th>
+                    <th class="p-4">Code</th>
+                    <th class="p-4">Category</th>
+                    <th class="p-4">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for permission in permissions %}
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4 font-semibold">{{ permission.name }}</td>
+                    <td class="p-4 font-mono text-xs">{{ permission.code }}</td>
+                    <td class="p-4">{{ permission.category }}</td>
+                    <td class="p-4">
+                        {% if permission.is_active %}
+                            <span class="text-green-600 font-semibold">Active</span>
+                        {% else %}
+                            <span class="text-red-600 font-semibold">Inactive</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
