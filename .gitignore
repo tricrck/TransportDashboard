@@ -3,3 +3,8 @@ TransportDashboard.zip
 *.env
 .env
 env
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
