@@ -8,3 +8,12 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/

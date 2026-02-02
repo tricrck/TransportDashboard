@@ -1,0 +1,435 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 p-6">
+    
+    <!-- Page Header -->
+    <div class="mb-8">
+        <span class="text-xs font-black text-slate-600 uppercase tracking-widest block mb-2">
+            System Configuration
+        </span>
+        <h1 class="text-5xl font-black text-slate-900 tracking-tight mb-2">
+            Settings & Preferences
+        </h1>
+        <p class="text-lg text-slate-600 font-medium">
+            Customize your account, notifications, and system preferences
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        <!-- Settings Navigation -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 sticky top-6">
+                <h3 class="text-sm font-black text-slate-500 uppercase mb-3 px-2">Settings Menu</h3>
+                
+                <nav class="space-y-1">
+                    <button class="w-full text-left px-4 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center gap-3 transition">
+                        <i class="fas fa-user w-5"></i>
+                        <span>Profile</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-bell w-5"></i>
+                        <span>Notifications</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-shield-alt w-5"></i>
+                        <span>Security</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-palette w-5"></i>
+                        <span>Appearance</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-envelope w-5"></i>
+                        <span>Email Settings</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>System</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-key w-5"></i>
+                        <span>API Keys</span>
+                    </button>
+                    
+                    <button class="w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 rounded-xl font-medium flex items-center gap-3 transition">
+                        <i class="fas fa-download w-5"></i>
+                        <span>Data Export</span>
+                    </button>
+                </nav>
+
+                <div class="mt-6 pt-6 border-t border-slate-200">
+                    <button class="w-full px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl font-bold flex items-center gap-3 transition">
+                        <i class="fas fa-trash-alt w-5"></i>
+                        <span>Delete Account</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Content -->
+        <div class="lg:col-span-3 space-y-6">
+            
+            <!-- Profile Settings -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+                    <div class="flex items-center gap-6">
+                        <div class="w-24 h-24 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center text-4xl font-black border-2 border-white/30">
+                            JK
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-black mb-1">John Kamau</h2>
+                            <p class="text-blue-100">john.kamau@transport.ke</p>
+                            <span class="inline-block mt-2 px-3 py-1 bg-white/20 backdrop-blur rounded-full text-xs font-bold">
+                                Administrator
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="text-lg font-black text-slate-900 mb-4">Personal Information</h3>
+                    
+                    <form class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">First Name</label>
+                                <input type="text" 
+                                       value="John" 
+                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Last Name</label>
+                                <input type="text" 
+                                       value="Kamau" 
+                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Email Address</label>
+                            <input type="email" 
+                                   value="john.kamau@transport.ke" 
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Phone Number</label>
+                            <input type="tel" 
+                                   value="+254 722 123 456" 
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Organization</label>
+                            <input type="text" 
+                                   value="Kenya Transport Authority" 
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Job Title</label>
+                            <input type="text" 
+                                   value="System Administrator" 
+                                   class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        </div>
+
+                        <div class="flex justify-end gap-3 pt-4">
+                            <button type="button" class="px-6 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="text-xl font-black text-slate-900">Notification Preferences</h3>
+                    <p class="text-sm text-slate-600 mt-1">Choose how and when you want to be notified</p>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <!-- Email Notifications -->
+                    <div>
+                        <h4 class="text-sm font-black text-slate-700 uppercase mb-3">Email Notifications</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">Dashboard Updates</p>
+                                    <p class="text-sm text-slate-600">Receive emails about dashboard changes</p>
+                                </div>
+                                <input type="checkbox" checked class="w-12 h-6 rounded-full appearance-none bg-blue-600 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">Report Generation</p>
+                                    <p class="text-sm text-slate-600">Get notified when reports are ready</p>
+                                </div>
+                                <input type="checkbox" checked class="w-12 h-6 rounded-full appearance-none bg-blue-600 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">System Alerts</p>
+                                    <p class="text-sm text-slate-600">Critical system notifications and alerts</p>
+                                </div>
+                                <input type="checkbox" checked class="w-12 h-6 rounded-full appearance-none bg-blue-600 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">Weekly Summary</p>
+                                    <p class="text-sm text-slate-600">Weekly performance summary emails</p>
+                                </div>
+                                <input type="checkbox" class="w-12 h-6 rounded-full appearance-none bg-slate-300 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6 checked:bg-blue-600">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Push Notifications -->
+                    <div class="pt-6 border-t border-slate-200">
+                        <h4 class="text-sm font-black text-slate-700 uppercase mb-3">Push Notifications</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">Desktop Notifications</p>
+                                    <p class="text-sm text-slate-600">Show desktop notifications for important events</p>
+                                </div>
+                                <input type="checkbox" checked class="w-12 h-6 rounded-full appearance-none bg-blue-600 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6">
+                            </label>
+
+                            <label class="flex items-center justify-between p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition">
+                                <div>
+                                    <p class="font-bold text-slate-900">Mobile Push</p>
+                                    <p class="text-sm text-slate-600">Send push notifications to mobile devices</p>
+                                </div>
+                                <input type="checkbox" class="w-12 h-6 rounded-full appearance-none bg-slate-300 relative cursor-pointer transition-colors
+                                       before:content-[''] before:absolute before:w-5 before:h-5 before:rounded-full before:bg-white before:top-0.5 before:left-0.5 before:transition-transform
+                                       checked:before:translate-x-6 checked:bg-blue-600">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="text-xl font-black text-slate-900">Security & Privacy</h3>
+                    <p class="text-sm text-slate-600 mt-1">Manage your password and security preferences</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Change Password -->
+                    <div>
+                        <h4 class="text-sm font-black text-slate-700 uppercase mb-3">Change Password</h4>
+                        <form class="space-y-3">
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Current Password</label>
+                                <input type="password" 
+                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                                       placeholder="Enter current password">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">New Password</label>
+                                <input type="password" 
+                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                                       placeholder="Enter new password">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Confirm New Password</label>
+                                <input type="password" 
+                                       class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                                       placeholder="Confirm new password">
+                            </div>
+                            <button type="submit" class="px-6 py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">
+                                Update Password
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Two-Factor Authentication -->
+                    <div class="pt-6 border-t border-slate-200">
+                        <h4 class="text-sm font-black text-slate-700 uppercase mb-3">Two-Factor Authentication</h4>
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-4">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-shield-alt text-white text-xl"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-emerald-900 mb-1">2FA is Enabled</p>
+                                <p class="text-sm text-emerald-700">Your account is protected with two-factor authentication</p>
+                            </div>
+                            <button class="px-4 py-2 bg-white border border-emerald-300 text-emerald-700 rounded-xl font-bold hover:bg-emerald-50 transition">
+                                Disable
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Sessions -->
+                    <div class="pt-6 border-t border-slate-200">
+                        <h4 class="text-sm font-black text-slate-700 uppercase mb-3">Active Sessions</h4>
+                        <div class="space-y-3">
+                            <div class="p-4 bg-slate-50 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-desktop text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">Windows PC - Chrome</p>
+                                        <p class="text-sm text-slate-600">Nairobi, Kenya • Current session</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">Active</span>
+                            </div>
+
+                            <div class="p-4 bg-slate-50 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-slate-400 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-mobile-alt text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-900">iPhone - Safari</p>
+                                        <p class="text-sm text-slate-600">Nairobi, Kenya • 2 hours ago</p>
+                                    </div>
+                                </div>
+                                <button class="text-sm text-red-600 font-bold hover:text-red-700">Revoke</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance Settings -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="text-xl font-black text-slate-900">Appearance</h3>
+                    <p class="text-sm text-slate-600 mt-1">Customize how the interface looks</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-3">Theme</label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="theme" value="light" checked class="peer sr-only">
+                                <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 transition">
+                                    <div class="w-full h-24 bg-white rounded-lg border border-slate-200 mb-3"></div>
+                                    <p class="font-bold text-center">Light</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="theme" value="dark" class="peer sr-only">
+                                <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 transition">
+                                    <div class="w-full h-24 bg-slate-900 rounded-lg border border-slate-700 mb-3"></div>
+                                    <p class="font-bold text-center">Dark</p>
+                                </div>
+                            </label>
+
+                            <label class="relative cursor-pointer">
+                                <input type="radio" name="theme" value="auto" class="peer sr-only">
+                                <div class="p-4 border-2 border-slate-200 rounded-xl peer-checked:border-blue-600 peer-checked:bg-blue-50 transition">
+                                    <div class="w-full h-24 bg-gradient-to-r from-white to-slate-900 rounded-lg border border-slate-200 mb-3"></div>
+                                    <p class="font-bold text-center">Auto</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-3">Language</label>
+                        <select class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <option>English</option>
+                            <option>Kiswahili</option>
+                            <option>Français</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-3">Timezone</label>
+                        <select class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                            <option>Africa/Nairobi (EAT)</option>
+                            <option>UTC</option>
+                            <option>Africa/Lagos (WAT)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Export -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-100">
+                    <h3 class="text-xl font-black text-slate-900">Data Export</h3>
+                    <p class="text-sm text-slate-600 mt-1">Download your data and activity history</p>
+                </div>
+
+                <div class="p-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-download text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-blue-900 mb-2">Export Your Data</h4>
+                                <p class="text-sm text-blue-700 mb-4">
+                                    Download a copy of your account data, including dashboards, widgets, and activity logs.
+                                </p>
+                                <button class="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                                    Request Data Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500">
+                        Your data will be prepared and sent to your email address within 24 hours.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Integration Notes -->
+<!-- 
+Flask Route Examples:
+@app.route('/settings/profile', methods=['GET', 'POST'])
+def update_profile():
+    # Update user profile information
+    
+@app.route('/settings/notifications', methods=['POST'])
+def update_notifications():
+    # Update notification preferences
+    
+@app.route('/settings/password', methods=['POST'])
+def change_password():
+    # Change user password
+    
+@app.route('/settings/export-data', methods=['POST'])
+def export_data():
+    # Request data export
+-->
+{% endblock %}

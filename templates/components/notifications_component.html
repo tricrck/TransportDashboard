@@ -1,0 +1,413 @@
+<!-- Notifications & Messages Component -->
+<!-- Include this file in your base.html or any page that needs notifications -->
+
+<!-- Notification Bell Button (Add to navbar) -->
+<div class="relative notification-trigger">
+    <button id="notificationBtn" class="relative p-3 hover:bg-slate-100 rounded-xl transition-all">
+        <i class="fas fa-bell text-xl text-slate-700"></i>
+        <!-- Unread Badge -->
+        <span id="notificationBadge" class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+            5
+        </span>
+    </button>
+
+    <!-- Notification Dropdown -->
+    <div id="notificationDropdown" class="hidden absolute right-0 top-full mt-2 w-96 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+        <!-- Header -->
+        <div class="p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-black">Notifications</h3>
+                <p class="text-xs text-blue-100">You have 5 unread notifications</p>
+            </div>
+            <button class="text-xs font-bold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg transition">
+                Mark all read
+            </button>
+        </div>
+
+        <!-- Notification Tabs -->
+        <div class="flex border-b border-slate-200 bg-slate-50">
+            <button class="flex-1 px-4 py-3 font-bold text-sm border-b-2 border-blue-600 text-blue-600 bg-white">
+                All <span class="ml-1 text-xs bg-blue-100 px-2 py-0.5 rounded-full">5</span>
+            </button>
+            <button class="flex-1 px-4 py-3 font-medium text-sm text-slate-600 hover:bg-white transition">
+                Messages <span class="ml-1 text-xs bg-slate-200 px-2 py-0.5 rounded-full">3</span>
+            </button>
+            <button class="flex-1 px-4 py-3 font-medium text-sm text-slate-600 hover:bg-white transition">
+                Alerts <span class="ml-1 text-xs bg-slate-200 px-2 py-0.5 rounded-full">2</span>
+            </button>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="max-h-96 overflow-y-auto">
+            
+            <!-- Notification Item 1 - Unread -->
+            <div class="p-4 hover:bg-blue-50 transition cursor-pointer border-l-4 border-blue-500 bg-blue-50/50">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-check-circle text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-900 text-sm">Report Generated Successfully</p>
+                            <span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                        </div>
+                        <p class="text-sm text-slate-600 line-clamp-2">
+                            Your monthly revenue report has been generated and is ready for download.
+                        </p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-xs text-slate-500"><i class="fas fa-clock mr-1"></i>2 minutes ago</span>
+                            <button class="text-xs font-bold text-blue-600 hover:text-blue-700">View Report</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Item 2 - Unread -->
+            <div class="p-4 hover:bg-purple-50 transition cursor-pointer border-l-4 border-purple-500 bg-purple-50/50 border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user-plus text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-900 text-sm">New Team Member Added</p>
+                            <span class="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></span>
+                        </div>
+                        <p class="text-sm text-slate-600 line-clamp-2">
+                            Sarah Wanjiku has been added to your organization as an Analyst.
+                        </p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-xs text-slate-500"><i class="fas fa-clock mr-1"></i>1 hour ago</span>
+                            <button class="text-xs font-bold text-purple-600 hover:text-purple-700">View Profile</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Item 3 - Unread -->
+            <div class="p-4 hover:bg-amber-50 transition cursor-pointer border-l-4 border-amber-500 bg-amber-50/50 border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-exclamation-triangle text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-900 text-sm">System Maintenance Scheduled</p>
+                            <span class="w-2 h-2 bg-amber-500 rounded-full flex-shrink-0"></span>
+                        </div>
+                        <p class="text-sm text-slate-600 line-clamp-2">
+                            Scheduled maintenance on Feb 5, 2026 from 2:00 AM to 4:00 AM EAT.
+                        </p>
+                        <div class="flex items-center gap-3 mt-2">
+                            <span class="text-xs text-slate-500"><i class="fas fa-clock mr-1"></i>3 hours ago</span>
+                            <button class="text-xs font-bold text-amber-600 hover:text-amber-700">Learn More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Item 4 - Read -->
+            <div class="p-4 hover:bg-slate-50 transition cursor-pointer border-l-4 border-transparent border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-slate-700 text-sm mb-1">Dashboard Updated</p>
+                        <p class="text-sm text-slate-500 line-clamp-2">
+                            "National Overview" dashboard has been updated with new widgets.
+                        </p>
+                        <span class="text-xs text-slate-400 mt-2 inline-block"><i class="fas fa-clock mr-1"></i>5 hours ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Item 5 - Read -->
+            <div class="p-4 hover:bg-slate-50 transition cursor-pointer border-l-4 border-transparent border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-envelope text-white"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-slate-700 text-sm mb-1">New Message from Admin</p>
+                        <p class="text-sm text-slate-500 line-clamp-2">
+                            Please review the new compliance requirements for Q1 2026.
+                        </p>
+                        <span class="text-xs text-slate-400 mt-2 inline-block"><i class="fas fa-clock mr-1"></i>Yesterday</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 bg-slate-50 border-t border-slate-200">
+            <a href="{{ url_for('main.notifications') }}" class="block text-center py-2 text-sm font-bold text-blue-600 hover:text-blue-700">
+                View All Notifications <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Messages Button (Add to navbar) -->
+<div class="relative message-trigger ml-3">
+    <button id="messageBtn" class="relative p-3 hover:bg-slate-100 rounded-xl transition-all">
+        <i class="fas fa-comment-alt text-xl text-slate-700"></i>
+        <!-- Unread Badge -->
+        <span id="messageBadge" class="absolute top-1 right-1 w-5 h-5 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+            3
+        </span>
+    </button>
+
+    <!-- Messages Dropdown -->
+    <div id="messageDropdown" class="hidden absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
+        <!-- Header -->
+        <div class="p-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-black">Messages</h3>
+                <p class="text-xs text-purple-100">3 unread conversations</p>
+            </div>
+            <button class="w-8 h-8 bg-white/20 hover:bg-white/30 rounded-lg flex items-center justify-center transition">
+                <i class="fas fa-pen text-sm"></i>
+            </button>
+        </div>
+
+        <!-- Messages List -->
+        <div class="max-h-96 overflow-y-auto">
+            
+            <!-- Message 1 - Unread -->
+            <div class="p-4 hover:bg-blue-50 transition cursor-pointer border-l-4 border-blue-500 bg-blue-50/50">
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-black">
+                            SK
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-900 text-sm">Sarah Kariuki</p>
+                            <span class="text-xs text-slate-500">10m</span>
+                        </div>
+                        <p class="text-sm text-slate-600 line-clamp-2">
+                            Can you review the latest analytics dashboard? I've added some new metrics.
+                        </p>
+                        <span class="w-2 h-2 bg-blue-500 rounded-full inline-block mt-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message 2 - Unread -->
+            <div class="p-4 hover:bg-blue-50 transition cursor-pointer border-l-4 border-blue-500 bg-blue-50/50 border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-black">
+                            JM
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-900 text-sm">James Mwangi</p>
+                            <span class="text-xs text-slate-500">1h</span>
+                        </div>
+                        <p class="text-sm text-slate-600 line-clamp-2">
+                            The Q1 report is ready. Let me know when you want to go over it.
+                        </p>
+                        <span class="w-2 h-2 bg-blue-500 rounded-full inline-block mt-2"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message 3 - Read -->
+            <div class="p-4 hover:bg-slate-50 transition cursor-pointer border-l-4 border-transparent border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center text-white font-black">
+                            AM
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-700 text-sm">Anne Mutua</p>
+                            <span class="text-xs text-slate-400">2h</span>
+                        </div>
+                        <p class="text-sm text-slate-500 line-clamp-2">
+                            Thanks for your help with the widget configuration!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message 4 - Read -->
+            <div class="p-4 hover:bg-slate-50 transition cursor-pointer border-l-4 border-transparent border-t border-slate-100">
+                <div class="flex gap-3">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-black">
+                            PO
+                        </div>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between mb-1">
+                            <p class="font-bold text-slate-700 text-sm">Peter Omondi</p>
+                            <span class="text-xs text-slate-400">5h</span>
+                        </div>
+                        <p class="text-sm text-slate-500 line-clamp-2">
+                            Meeting scheduled for tomorrow at 10 AM.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="p-3 bg-slate-50 border-t border-slate-200">
+            <a href="{{ url_for('main.messages') }}" class="block text-center py-2 text-sm font-bold text-purple-600 hover:text-purple-700">
+                View All Messages <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notifications Container (for real-time notifications) -->
+<div id="toastContainer" class="fixed top-6 right-6 z-50 space-y-3 w-96">
+    <!-- Toast notifications will be dynamically added here -->
+</div>
+
+<!-- JavaScript for Notifications & Messages -->
+<script>
+    // Notification Dropdown Toggle
+    const notificationBtn = document.getElementById('notificationBtn');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const messageBtn = document.getElementById('messageBtn');
+    const messageDropdown = document.getElementById('messageDropdown');
+
+    if (notificationBtn) {
+        notificationBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('hidden');
+            messageDropdown.classList.add('hidden');
+        });
+    }
+
+    if (messageBtn) {
+        messageBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            messageDropdown.classList.toggle('hidden');
+            notificationDropdown.classList.add('hidden');
+        });
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.notification-trigger')) {
+            notificationDropdown.classList.add('hidden');
+        }
+        if (!e.target.closest('.message-trigger')) {
+            messageDropdown.classList.add('hidden');
+        }
+    });
+
+    // Toast Notification Function
+    function showToast(title, message, type = 'info', duration = 5000) {
+        const toastContainer = document.getElementById('toastContainer');
+        
+        const typeColors = {
+            success: { bg: 'bg-emerald-500', icon: 'fa-check-circle' },
+            error: { bg: 'bg-red-500', icon: 'fa-exclamation-circle' },
+            warning: { bg: 'bg-amber-500', icon: 'fa-exclamation-triangle' },
+            info: { bg: 'bg-blue-500', icon: 'fa-info-circle' }
+        };
+        
+        const color = typeColors[type] || typeColors.info;
+        
+        const toast = document.createElement('div');
+        toast.className = 'bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-300 translate-x-full opacity-0';
+        toast.innerHTML = `
+            <div class="flex items-start gap-3 p-4">
+                <div class="w-10 h-10 ${color.bg} rounded-xl flex items-center justify-center flex-shrink-0">
+                    <i class="fas ${color.icon} text-white"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-bold text-slate-900 text-sm mb-1">${title}</p>
+                    <p class="text-sm text-slate-600">${message}</p>
+                </div>
+                <button onclick="this.closest('div').parentElement.remove()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="h-1 ${color.bg} toast-progress"></div>
+        `;
+        
+        toastContainer.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 10);
+        
+        // Auto remove
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    // Example: Real-time notification polling (replace with WebSocket in production)
+    /*
+    function pollNotifications() {
+        fetch('{{ url_for("api.get_notifications") }}')
+            .then(response => response.json())
+            .then(data => {
+                // Update notification badge
+                document.getElementById('notificationBadge').textContent = data.unread_count;
+                
+                // Show toast for new notifications
+                if (data.new_notifications && data.new_notifications.length > 0) {
+                    data.new_notifications.forEach(notification => {
+                        showToast(notification.title, notification.message, notification.type);
+                    });
+                }
+            });
+    }
+    
+    // Poll every 30 seconds
+    setInterval(pollNotifications, 30000);
+    */
+</script>
+
+<style>
+    @keyframes progress {
+        from { width: 100%; }
+        to { width: 0%; }
+    }
+    
+    .toast-progress {
+        animation: progress 5s linear;
+    }
+</style>
+
+<!-- API Integration Notes -->
+<!-- 
+Flask Route Examples:
+@app.route('/api/notifications')
+def get_notifications():
+    # Return JSON list of notifications
+    
+@app.route('/api/notifications/<id>/mark-read', methods=['POST'])
+def mark_notification_read(id):
+    # Mark notification as read
+    
+@app.route('/api/messages')
+def get_messages():
+    # Return JSON list of messages
+    
+@app.route('/notifications')
+def notifications_page():
+    # Full notifications page
+    
+@app.route('/messages')
+def messages_page():
+    # Full messages page
+-->

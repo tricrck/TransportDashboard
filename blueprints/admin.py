@@ -163,7 +163,51 @@ def mark_notification_read(notification_id):
     notification.mark_as_read()
     
     return redirect(url_for('main.notifications'))
+@main_bp.route('/analytics')
+@login_required
+def analytics():
+    """Analytics page with KPIs and charts"""
+    return render_template('components/analytics.html')
 
+@main_bp.route('/reports')
+@login_required
+def reports():
+    """Reports center page"""
+    return render_template('components/reports.html')
+
+# API endpoints for analytics data (referenced in analytics.html)
+@main_bp.route('/analytics/revenue-data')
+@login_required
+def get_revenue_data():
+    """Return JSON data for revenue chart"""
+    # TODO: Replace with actual database queries
+    data = {
+        'labels': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        'values': [45000, 52000, 48000, 61000, 55000, 67000]
+    }
+    return jsonify(data)
+
+@main_bp.route('/analytics/demographics-data')
+@login_required
+def get_demographics_data():
+    """Return JSON data for demographics pie chart"""
+    # TODO: Replace with actual database queries
+    data = {
+        'labels': ['Students', 'Adults', 'Seniors', 'Corporate'],
+        'values': [35, 45, 10, 10]
+    }
+    return jsonify(data)
+
+@main_bp.route('/analytics/peak-hours-data')
+@login_required
+def get_peak_hours_data():
+    """Return JSON data for peak hours bar chart"""
+    # TODO: Replace with actual database queries
+    data = {
+        'labels': ['6AM', '9AM', '12PM', '3PM', '6PM', '9PM'],
+        'values': [120, 450, 280, 310, 520, 180]
+    }
+    return jsonify(data)
 
 # ============================================================================
 # ADMIN BLUEPRINT

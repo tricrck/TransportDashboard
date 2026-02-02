@@ -1,70 +1,209 @@
-<nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
-    <div class="px-6 py-4">
+<nav class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50 shadow-sm">
+    <div class="px-4 lg:px-6 py-3">
         <div class="flex items-center justify-between">
             <!-- Left Section -->
-            <div class="flex items-center gap-6">
+            <div class="flex items-center gap-4">
                 <!-- Mobile Menu Toggle -->
-                <button id="sidebarToggle" class="lg:hidden w-10 h-10 flex items-center justify-center bg-gray-100 rounded-xl text-gray-700 hover:bg-gray-200 transition-colors">
-                    <i class="fas fa-bars"></i>
+                <button id="sidebarToggle" 
+                        class="lg:hidden w-11 h-11 flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white hover:shadow-lg hover:scale-105 transition-all duration-200">
+                    <i class="fas fa-bars text-lg"></i>
                 </button>
                 
-                <!-- Breadcrumb (Desktop) -->
-                <div class="hidden md:flex items-center gap-2 text-sm">
-                    <a href="{{ url_for('main.dashboard') }}" class="text-blue-600 hover:text-blue-700 font-medium transition-colors">Home</a>
-                    <span class="text-gray-400">/</span>
-                    <span class="text-gray-600">Dashboard</span>
+                <!-- Page Title (Mobile & Desktop) -->
+                <div class="flex items-center gap-3">
+                    <div class="hidden sm:block w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white shadow-md">
+                        <i class="fas fa-chart-line text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg lg:text-xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+                        <p class="hidden lg:block text-xs text-gray-500">Real-time Analytics</p>
+                    </div>
                 </div>
             </div>
             
             <!-- Right Section -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 lg:gap-3">
                 <!-- Search Box (Desktop) -->
-                <div class="hidden md:flex items-center gap-3 bg-gray-100 px-5 py-3 rounded-xl border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all w-80">
+                <div class="hidden xl:flex items-center gap-3 bg-gray-100/80 backdrop-blur-sm px-4 py-2.5 rounded-xl border border-gray-200/50 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-md transition-all w-72">
                     <i class="fas fa-search text-gray-400 text-sm"></i>
-                    <input type="text" placeholder="Search dashboards, widgets..." class="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder-gray-400">
+                    <input type="text" 
+                           placeholder="Search..." 
+                           class="bg-transparent border-none outline-none w-full text-sm text-gray-700 placeholder-gray-400">
+                    <kbd class="hidden lg:inline-block px-2 py-0.5 bg-gray-200 text-gray-500 text-xs rounded font-mono">⌘K</kbd>
                 </div>
                 
-                <!-- Notification Bell -->
-                <button class="relative w-10 h-10 flex items-center justify-center border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-all">
-                    <i class="fas fa-bell"></i>
-                    <span class="absolute -top-1 -right-1 min-w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full text-xs font-bold flex items-center justify-center px-1.5 border-2 border-white">3</span>
+                <!-- Search Icon (Mobile/Tablet) -->
+                <button class="xl:hidden w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 transition-all duration-200">
+                    <i class="fas fa-search text-sm"></i>
                 </button>
                 
-                <!-- Messages -->
-                <button class="relative w-10 h-10 flex items-center justify-center border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 hover:border-blue-500 hover:text-blue-500 transition-all">
-                    <i class="fas fa-envelope"></i>
-                    <span class="absolute -top-1 -right-1 min-w-5 h-5 bg-gradient-to-br from-red-500 to-red-600 text-white rounded-full text-xs font-bold flex items-center justify-center px-1.5 border-2 border-white">5</span>
-                </button>
+                <!-- Quick Actions Dropdown (Desktop) -->
+                <div class="hidden lg:block relative">
+                    <button id="quickActionsToggle"
+                            class="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 hover:shadow-lg rounded-xl text-white transition-all duration-200 hover:scale-105">
+                        <i class="fas fa-plus text-sm"></i>
+                    </button>
+                    
+                    <!-- Quick Actions Dropdown Menu -->
+                    <div id="quickActionsDropdown" 
+                         class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-200/50 backdrop-blur-xl overflow-hidden z-50">
+                        <div class="p-3 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                            <h3 class="text-sm font-bold">Quick Actions</h3>
+                            <p class="text-xs opacity-90">Create something new</p>
+                        </div>
+                        <div class="p-2">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-file-alt text-sm"></i>
+                                </div>
+                                <span class="font-medium">New Report</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-chart-bar text-sm"></i>
+                                </div>
+                                <span class="font-medium">New Widget</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-database text-sm"></i>
+                                </div>
+                                <span class="font-medium">Data Source</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Notifications -->
+                <div class="relative">
+                    <!-- <button id="notificationsToggle"
+                            class="relative w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-600 transition-all duration-200">
+                        <i class="fas fa-bell text-sm"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-red-500 to-pink-600 text-white rounded-full text-xs font-bold flex items-center justify-center border-2 border-white shadow-lg">
+                            3
+                        </span>
+                    </button> -->
+                    
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsDropdown" 
+                         class="hidden absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-gray-200/50 backdrop-blur-xl overflow-hidden z-50 max-h-96">
+                        <div class="p-4 bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold">Notifications</h3>
+                                <p class="text-xs opacity-90">You have 3 unread notifications</p>
+                            </div>
+                            <button class="text-xs underline hover:no-underline">Mark all read</button>
+                        </div>
+                        <div class="max-h-72 overflow-y-auto">
+                            <div class="p-3 hover:bg-blue-50 border-b border-gray-100 transition-all cursor-pointer">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900">Report Generated</p>
+                                        <p class="text-xs text-gray-600 mt-0.5">Your monthly financial report is ready</p>
+                                        <p class="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 hover:bg-purple-50 border-b border-gray-100 transition-all cursor-pointer">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900">New Team Member</p>
+                                        <p class="text-xs text-gray-600 mt-0.5">John Doe joined your organization</p>
+                                        <p class="text-xs text-gray-400 mt-1">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3 hover:bg-amber-50 border-b border-gray-100 transition-all cursor-pointer">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-gray-900">Data Source Alert</p>
+                                        <p class="text-xs text-gray-600 mt-0.5">Connection issue with external API</p>
+                                        <p class="text-xs text-gray-400 mt-1">3 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-gray-50 border-t border-gray-100">
+                            <a href="#" class="text-xs text-blue-600 hover:text-blue-700 font-semibold block text-center">
+                                View all notifications
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- User Menu -->
                 {% if current_user.is_authenticated %}
                 <div class="relative">
-                    <button id="userMenuToggle" class="flex items-center gap-3 px-3 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm">
+                    <button id="userMenuToggle" 
+                            class="flex items-center gap-2 lg:gap-3 px-2 lg:px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all duration-200 group">
+                        <div class="w-9 h-9 lg:w-10 lg:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-md group-hover:shadow-lg transition-all">
                             {{ current_user.first_name[0] if current_user.first_name else 'U' }}
                         </div>
                         <div class="hidden md:block text-left">
-                            <div class="text-sm font-semibold text-gray-900">{{ current_user.full_name }}</div>
-                            <div class="text-xs text-gray-500">{{ current_user.role.name if current_user.role else 'User' }}</div>
+                            <div class="text-sm font-bold text-gray-900 leading-tight">{{ current_user.full_name }}</div>
+                            <!-- <div class="text-xs text-gray-500">{{ current_user.role.name if current_user.role else 'User' }}</div> -->
                         </div>
-                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                        <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform group-hover:rotate-180 hidden lg:block"></i>
                     </button>
                     
-                    <!-- Dropdown Menu -->
-                    <div id="userMenuDropdown" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i class="fas fa-user w-4"></i>
-                            <span>Profile</span>
-                        </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                            <i class="fas fa-cog w-4"></i>
-                            <span>Settings</span>
-                        </a>
-                        <div class="border-t border-gray-100 my-2"></div>
-                        <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                            <i class="fas fa-sign-out-alt w-4"></i>
-                            <span>Logout</span>
-                        </a>
+                    <!-- User Dropdown Menu -->
+                    <div id="userMenuDropdown" 
+                         class="hidden absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-200/50 backdrop-blur-xl overflow-hidden z-50">
+                        <div class="p-4 bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm text-white flex items-center justify-center font-bold text-lg">
+                                    {{ current_user.first_name[0] if current_user.first_name else 'U' }}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-sm">{{ current_user.full_name }}</p>
+                                    <p class="text-xs opacity-90">{{ current_user.email }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-2">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-user text-sm"></i>
+                                </div>
+                                <span class="font-medium">My Profile</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-purple-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-cog text-sm"></i>
+                                </div>
+                                <span class="font-medium">Settings</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-bell text-sm"></i>
+                                </div>
+                                <span class="font-medium">Preferences</span>
+                            </a>
+                            <div class="border-t border-gray-100 my-2"></div>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-gray-100 text-gray-600 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-all">
+                                    <i class="fas fa-question-circle text-sm"></i>
+                                </div>
+                                <span class="font-medium">Help & Support</span>
+                            </a>
+                            <div class="border-t border-gray-100 my-2"></div>
+                            <a href="{{ url_for('auth.logout') }}" 
+                               class="flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all group">
+                                <div class="w-8 h-8 bg-red-100 text-red-600 rounded-lg flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all">
+                                    <i class="fas fa-sign-out-alt text-sm"></i>
+                                </div>
+                                <span class="font-medium">Logout</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 {% endif %}
@@ -74,23 +213,62 @@
 </nav>
 
 <script>
-    // User menu toggle
-    const userMenuToggle = document.getElementById('userMenuToggle');
-    const userMenuDropdown = document.getElementById('userMenuDropdown');
+    // Dropdown toggles
+    const dropdowns = [
+        { toggle: 'userMenuToggle', dropdown: 'userMenuDropdown' },
+        { toggle: 'notificationsToggle', dropdown: 'notificationsDropdown' },
+        { toggle: 'quickActionsToggle', dropdown: 'quickActionsDropdown' }
+    ];
     
-    if (userMenuToggle && userMenuDropdown) {
-        userMenuToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            userMenuDropdown.classList.toggle('hidden');
-        });
+    dropdowns.forEach(({ toggle, dropdown }) => {
+        const toggleBtn = document.getElementById(toggle);
+        const dropdownMenu = document.getElementById(dropdown);
         
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!userMenuDropdown.classList.contains('hidden') && 
-                !userMenuDropdown.contains(e.target) && 
-                e.target !== userMenuToggle) {
-                userMenuDropdown.classList.add('hidden');
+        if (toggleBtn && dropdownMenu) {
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // Close other dropdowns
+                dropdowns.forEach(({ dropdown: otherDropdown }) => {
+                    if (otherDropdown !== dropdown) {
+                        document.getElementById(otherDropdown)?.classList.add('hidden');
+                    }
+                });
+                
+                // Toggle current dropdown
+                dropdownMenu.classList.toggle('hidden');
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        dropdowns.forEach(({ dropdown }) => {
+            const dropdownMenu = document.getElementById(dropdown);
+            if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+                dropdownMenu.classList.add('hidden');
             }
         });
-    }
+    });
+    
+    // Prevent dropdown close when clicking inside
+    dropdowns.forEach(({ dropdown }) => {
+        const dropdownMenu = document.getElementById(dropdown);
+        if (dropdownMenu) {
+            dropdownMenu.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        }
+    });
+    
+    // Keyboard shortcut for search (Cmd/Ctrl + K)
+    document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.querySelector('nav input[type="text"]');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+    });
 </script>

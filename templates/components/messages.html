@@ -1,0 +1,440 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="h-screen bg-slate-50 flex flex-col">
+    
+    <!-- Messages Header -->
+    <div class="bg-white border-b border-slate-200 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center">
+                    <i class="fas fa-comment-alt text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900">Messages</h1>
+                    <p class="text-sm text-slate-600">3 unread conversations</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-slate-700 transition">
+                    <i class="fas fa-search mr-2"></i>Search
+                </button>
+                <button class="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition shadow-lg">
+                    <i class="fas fa-pen mr-2"></i>New Message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Content -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Conversations Sidebar -->
+        <div class="w-96 bg-white border-r border-slate-200 flex flex-col">
+            
+            <!-- Search & Filter -->
+            <div class="p-4 border-b border-slate-200">
+                <div class="relative mb-3">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" 
+                           placeholder="Search conversations..." 
+                           class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm">
+                </div>
+                
+                <div class="flex gap-2">
+                    <button class="flex-1 px-3 py-2 bg-purple-600 text-white rounded-lg text-xs font-bold">
+                        All
+                    </button>
+                    <button class="flex-1 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition">
+                        Unread
+                    </button>
+                    <button class="flex-1 px-3 py-2 bg-slate-100 text-slate-700 rounded-lg text-xs font-bold hover:bg-slate-200 transition">
+                        Starred
+                    </button>
+                </div>
+            </div>
+
+            <!-- Conversations List -->
+            <div class="flex-1 overflow-y-auto">
+                
+                <!-- Conversation 1 - Active & Unread -->
+                <div class="p-4 hover:bg-purple-50 cursor-pointer transition border-l-4 border-l-purple-500 bg-purple-50">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                SK
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-black text-slate-900 text-sm truncate">Sarah Kariuki</h4>
+                                <span class="text-xs text-slate-500 flex-shrink-0">10m</span>
+                            </div>
+                            <p class="text-sm text-slate-700 truncate mb-1">
+                                Can you review the latest analytics dashboard?
+                            </p>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full"></span>
+                                <span class="text-xs text-purple-600 font-bold">New message</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation 2 - Unread -->
+                <div class="p-4 hover:bg-blue-50 cursor-pointer transition border-l-4 border-l-blue-500 bg-blue-50/50 border-t border-slate-100">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                JM
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-black text-slate-900 text-sm truncate">James Mwangi</h4>
+                                <span class="text-xs text-slate-500 flex-shrink-0">1h</span>
+                            </div>
+                            <p class="text-sm text-slate-700 truncate mb-1">
+                                The Q1 report is ready for review
+                            </p>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                <span class="text-xs text-blue-600 font-bold">2 new</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation 3 - Read -->
+                <div class="p-4 hover:bg-slate-50 cursor-pointer transition border-t border-slate-100">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                AM
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-bold text-slate-700 text-sm truncate">Anne Mutua</h4>
+                                <span class="text-xs text-slate-400 flex-shrink-0">2h</span>
+                            </div>
+                            <p class="text-sm text-slate-600 truncate">
+                                Thanks for your help with the widget!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation 4 - Read -->
+                <div class="p-4 hover:bg-slate-50 cursor-pointer transition border-t border-slate-100">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                PO
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-bold text-slate-700 text-sm truncate">Peter Omondi</h4>
+                                <span class="text-xs text-slate-400 flex-shrink-0">5h</span>
+                            </div>
+                            <p class="text-sm text-slate-600 truncate">
+                                Meeting scheduled for tomorrow
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conversation 5 - Read -->
+                <div class="p-4 hover:bg-slate-50 cursor-pointer transition border-t border-slate-100">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                MK
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-bold text-slate-700 text-sm truncate">Mary Kimani</h4>
+                                <span class="text-xs text-slate-400 flex-shrink-0">Yesterday</span>
+                            </div>
+                            <p class="text-sm text-slate-600 truncate">
+                                <i class="fas fa-paperclip mr-1"></i>Sent you a file
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More conversations... -->
+                <div class="p-4 hover:bg-slate-50 cursor-pointer transition border-t border-slate-100">
+                    <div class="flex gap-3">
+                        <div class="relative flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                DN
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-slate-400 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-bold text-slate-700 text-sm truncate">David Ngugi</h4>
+                                <span class="text-xs text-slate-400 flex-shrink-0">2 days ago</span>
+                            </div>
+                            <p class="text-sm text-slate-600 truncate">
+                                Perfect, see you then!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="flex-1 flex flex-col bg-slate-50">
+            
+            <!-- Chat Header -->
+            <div class="bg-white border-b border-slate-200 px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-lg">
+                                SK
+                            </div>
+                            <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-slate-900">Sarah Kariuki</h3>
+                            <p class="text-sm text-emerald-600 font-medium">
+                                <i class="fas fa-circle text-xs mr-1"></i>Active now
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition">
+                            <i class="fas fa-phone text-slate-600"></i>
+                        </button>
+                        <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition">
+                            <i class="fas fa-video text-slate-600"></i>
+                        </button>
+                        <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition">
+                            <i class="fas fa-info-circle text-slate-600"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                
+                <!-- Date Divider -->
+                <div class="flex items-center gap-4 my-6">
+                    <div class="flex-1 h-px bg-slate-200"></div>
+                    <span class="text-xs font-bold text-slate-500 uppercase">Today</span>
+                    <div class="flex-1 h-px bg-slate-200"></div>
+                </div>
+
+                <!-- Received Message 1 -->
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        SK
+                    </div>
+                    <div class="flex flex-col gap-1 max-w-lg">
+                        <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-slate-200">
+                            <p class="text-slate-900">Hi! I've been working on the new analytics dashboard and added some interesting metrics.</p>
+                        </div>
+                        <span class="text-xs text-slate-500 px-2">10:24 AM</span>
+                    </div>
+                </div>
+
+                <!-- Received Message 2 -->
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        SK
+                    </div>
+                    <div class="flex flex-col gap-1 max-w-lg">
+                        <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-slate-200">
+                            <p class="text-slate-900">Can you take a look when you have a moment? I'd love to get your feedback before publishing it.</p>
+                        </div>
+                        <span class="text-xs text-slate-500 px-2">10:24 AM</span>
+                    </div>
+                </div>
+
+                <!-- Sent Message 1 -->
+                <div class="flex gap-3 items-start justify-end">
+                    <div class="flex flex-col gap-1 max-w-lg items-end">
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                            <p>Absolutely! I'll review it right now. Which dashboard are we talking about?</p>
+                        </div>
+                        <span class="text-xs text-slate-500 px-2">10:26 AM</span>
+                    </div>
+                </div>
+
+                <!-- Received Message 3 -->
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        SK
+                    </div>
+                    <div class="flex flex-col gap-1 max-w-lg">
+                        <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm border border-slate-200">
+                            <p class="text-slate-900">It's the "National Transport Overview" dashboard. I've added passenger demographics breakdown and peak hours analysis.</p>
+                        </div>
+                        <span class="text-xs text-slate-500 px-2">10:27 AM</span>
+                    </div>
+                </div>
+
+                <!-- Sent Message 2 -->
+                <div class="flex gap-3 items-start justify-end">
+                    <div class="flex flex-col gap-1 max-w-lg items-end">
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+                            <p>Perfect! Those are exactly the metrics we needed. Let me check them out.</p>
+                        </div>
+                        <span class="text-xs text-slate-500 px-2">10:28 AM</span>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="flex gap-3 items-start">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                        SK
+                    </div>
+                    <div class="bg-white rounded-2xl rounded-tl-sm px-4 py-2 shadow-sm border border-slate-200">
+                        <div class="flex gap-1">
+                            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="bg-white border-t border-slate-200 px-6 py-4">
+                <div class="flex items-end gap-3">
+                    <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition flex-shrink-0">
+                        <i class="fas fa-plus text-slate-600"></i>
+                    </button>
+                    
+                    <div class="flex-1 relative">
+                        <textarea 
+                            rows="1"
+                            placeholder="Type a message..." 
+                            class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none max-h-32 font-medium"></textarea>
+                    </div>
+
+                    <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition flex-shrink-0">
+                        <i class="fas fa-paperclip text-slate-600"></i>
+                    </button>
+
+                    <button class="w-10 h-10 hover:bg-slate-100 rounded-xl flex items-center justify-center transition flex-shrink-0">
+                        <i class="fas fa-smile text-slate-600"></i>
+                    </button>
+
+                    <button class="px-6 h-10 bg-gradient-to-r from-purple-500 to-purple-600 text-white font-bold rounded-xl hover:from-purple-600 hover:to-purple-700 transition shadow-lg flex items-center gap-2">
+                        <i class="fas fa-paper-plane"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Info Sidebar (Optional - Can be toggled) -->
+        <div class="w-80 bg-white border-l border-slate-200 hidden lg:flex flex-col">
+            
+            <!-- Contact Info -->
+            <div class="p-6 border-b border-slate-200 text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-black text-3xl mx-auto mb-4">
+                    SK
+                </div>
+                <h3 class="text-xl font-black text-slate-900 mb-1">Sarah Kariuki</h3>
+                <p class="text-sm text-slate-600 mb-1">Senior Analyst</p>
+                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">
+                    <i class="fas fa-circle mr-1"></i>Active
+                </span>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="p-4 border-b border-slate-200">
+                <div class="grid grid-cols-3 gap-2">
+                    <button class="flex flex-col items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition">
+                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-phone text-blue-600"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">Call</span>
+                    </button>
+
+                    <button class="flex flex-col items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition">
+                        <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-video text-purple-600"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">Video</span>
+                    </button>
+
+                    <button class="flex flex-col items-center gap-2 p-3 hover:bg-slate-50 rounded-xl transition">
+                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-user text-amber-600"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">Profile</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shared Files -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <h4 class="text-sm font-black text-slate-500 uppercase mb-3">Shared Files</h4>
+                <div class="space-y-2">
+                    <div class="p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition cursor-pointer flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-file-pdf text-red-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-900 truncate">Q1_Report.pdf</p>
+                            <p class="text-xs text-slate-500">2.4 MB</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 rounded-xl hover:bg-slate-100 transition cursor-pointer flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-file-excel text-emerald-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-slate-900 truncate">Analytics_Data.xlsx</p>
+                            <p class="text-xs text-slate-500">1.8 MB</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Integration Notes -->
+<!-- 
+Flask Route Examples:
+@app.route('/messages')
+def messages_page():
+    # Render messages page
+    
+@app.route('/api/messages/conversations')
+def get_conversations():
+    # Return JSON list of conversations
+    
+@app.route('/api/messages/<conversation_id>')
+def get_messages(conversation_id):
+    # Return JSON list of messages in conversation
+    
+@app.route('/api/messages/send', methods=['POST'])
+def send_message():
+    # Send a new message
+    
+# WebSocket for real-time messaging
+@socketio.on('new_message')
+def handle_new_message(data):
+    # Handle incoming real-time message
+-->
+{% endblock %}

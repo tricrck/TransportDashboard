@@ -1,106 +1,518 @@
-<aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 bg-white border-r border-gray-200 z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto">
+<aside id="sidebar" class="fixed left-0 top-0 h-screen bg-white/95 backdrop-blur-xl border-r border-gray-200/50 z-40 transition-all duration-300 overflow-hidden sidebar-expanded shadow-xl">
     <!-- Sidebar Header -->
-    <div class="p-6 border-b border-gray-200 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/30">
+    <div class="p-5 border-b border-gray-200/50 flex items-center gap-3 relative bg-gradient-to-br from-blue-50/50 to-purple-50/50">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-blue-500/20 flex-shrink-0 hover:shadow-xl hover:scale-105 transition-all duration-200">
             <i class="fas fa-truck-moving"></i>
         </div>
-        <div>
-            <h2 class="text-base font-bold text-gray-900 tracking-tight">Kenya Transport</h2>
-            <p class="text-xs text-gray-500 mt-0.5">Analytics Platform</p>
+        <div class="sidebar-text overflow-hidden transition-all duration-300">
+            <h2 class="text-base font-bold text-gray-900 tracking-tight whitespace-nowrap">Kenya Transport</h2>
+            <p class="text-xs text-gray-500 mt-0.5 whitespace-nowrap flex items-center gap-1">
+                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                Analytics Platform
+            </p>
+        </div>
+        
+        <!-- Desktop Toggle Button -->
+        <button id="sidebarCollapseBtn" 
+                class="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-full items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 z-50 hover:scale-110">
+            <i class="fas fa-chevron-left text-xs transition-transform duration-300"></i>
+        </button>
+    </div>
+    
+    <!-- User Profile Section (Collapsed/Expanded) -->
+    <div class="p-4 border-b border-gray-200/50 bg-gradient-to-br from-blue-50/30 to-purple-50/30">
+        <div class="flex items-center gap-3 p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-md flex-shrink-0">
+                {{ current_user.first_name[0] if current_user.first_name else 'U' }}
+            </div>
+            <div class="sidebar-text overflow-hidden transition-all duration-300 min-w-0">
+                <p class="text-sm font-bold text-gray-900 truncate">{{ current_user.full_name }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ current_user.role.name if current_user.role else 'User' }}</p>
+            </div>
+            <i class="fas fa-chevron-right text-xs text-gray-400 sidebar-text ml-auto transition-transform duration-200"></i>
         </div>
     </div>
     
     <!-- Sidebar Menu -->
-    <nav class="p-4">
+    <nav class="p-4 overflow-y-auto sidebar-nav" style="height: calc(100vh - 185px);">
         <!-- Main Section -->
-        <div class="mb-8">
-            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Main</div>
-            <a href="{{ url_for('main.dashboard') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 shadow-md shadow-blue-500/25 mb-1">
-                <i class="fas fa-chart-line w-5 text-center"></i>
-                <span class="font-medium text-sm">Dashboard</span>
+        <div class="mb-6">
+            <div class="px-3 mb-3 text-xs font-bold text-gray-400 uppercase tracking-wider sidebar-text flex items-center gap-2">
+                <div class="w-5 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full sidebar-text"></div>
+                <span>Main</span>
+            </div>
+            <a href="{{ url_for('main.dashboard') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="dashboard">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-chart-line w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Dashboard</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-chart-bar w-5 text-center"></i>
-                <span class="font-medium text-sm">Analytics</span>
+            <a href="{{ url_for('main.analytics') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="analytics">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-chart-bar w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Analytics</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-chart-pie w-5 text-center"></i>
-                <span class="font-medium text-sm">Reports</span>
+            <a href="{{ url_for('main.reports') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="reports">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-file-alt w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Reports</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
         </div>
         
         <!-- Data Management Section -->
-        <div class="mb-8">
-            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Data Management</div>
-            <a href="{{ url_for('data_sources.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-database w-5 text-center"></i>
-                <span class="font-medium text-sm">Data Sources</span>
+        <div class="mb-6">
+            <div class="px-3 mb-3 text-xs font-bold text-gray-400 uppercase tracking-wider sidebar-text flex items-center gap-2">
+                <div class="w-5 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full sidebar-text"></div>
+                <span>Data Management</span>
+            </div>
+            <a href="{{ url_for('data_sources.index') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="data-sources">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-database w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Data Sources</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="{{ url_for('widgets.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-th w-5 text-center"></i>
-                <span class="font-medium text-sm">Widgets</span>
+            <a href="{{ url_for('widgets.index') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="widgets">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-th w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Widgets</span>
+                <span class="sidebar-text ml-auto opacity-70 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full font-bold relative z-10">12</span>
             </a>
-            <a href="{{ url_for('dashboards.index') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-columns w-5 text-center"></i>
-                <span class="font-medium text-sm">Dashboards</span>
+            <a href="{{ url_for('dashboards.index') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="dashboards">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-columns w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Dashboards</span>
+                <span class="sidebar-text ml-auto opacity-70 text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-bold relative z-10">5</span>
             </a>
         </div>
         
         <!-- Administration Section -->
         {% if current_user.has_permission('view_users') %}
-        <div class="mb-8">
-            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Administration</div>
-            <a href="{{ url_for('admin.organizations') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-building w-5 text-center"></i>
-                <span class="font-medium text-sm">Organizations</span>
+        <div class="mb-6">
+            <div class="px-3 mb-3 text-xs font-bold text-gray-400 uppercase tracking-wider sidebar-text flex items-center gap-2">
+                <div class="w-5 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full sidebar-text"></div>
+                <span>Administration</span>
+            </div>
+            <a href="{{ url_for('admin.organizations') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="organizations">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-building w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Organizations</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="{{ url_for('admin.users') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-users w-5 text-center"></i>
-                <span class="font-medium text-sm">Users</span>
+            <a href="{{ url_for('admin.users') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="users">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-users w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Users</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="{{ url_for('admin.roles') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-user-shield w-5 text-center"></i>
-                <span class="font-medium text-sm">Roles & Permissions</span>
+            <a href="{{ url_for('admin.roles') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="roles">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-user-shield w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Roles & Permissions</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
         </div>
         {% endif %}
         
         <!-- Account Section -->
-        <div class="mb-8">
-            <div class="px-3 mb-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Account</div>
-            <a href="#" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-cog w-5 text-center"></i>
-                <span class="font-medium text-sm">Settings</span>
+        <div class="mb-6">
+            <div class="px-3 mb-3 text-xs font-bold text-gray-400 uppercase tracking-wider sidebar-text flex items-center gap-2">
+                <div class="w-5 h-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full sidebar-text"></div>
+                <span>Account</span>
+            </div>
+            <a href="{{ url_for('auth.settings') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="settings">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-purple-600/0 group-hover:from-blue-500/10 group-hover:to-purple-600/10 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-cog w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Settings</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
-            <a href="{{ url_for('auth.logout') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all mb-1">
-                <i class="fas fa-sign-out-alt w-5 text-center"></i>
-                <span class="font-medium text-sm">Logout</span>
+            <a href="{{ url_for('auth.logout') }}" 
+               class="nav-item flex items-center gap-3 px-3 py-3 rounded-xl text-red-600 hover:bg-red-50 transition-all mb-1.5 group relative overflow-hidden" 
+               data-page="logout">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-500/0 to-red-600/0 group-hover:from-red-500/5 group-hover:to-red-600/5 transition-all duration-300 rounded-xl"></div>
+                <i class="fas fa-sign-out-alt w-5 text-center flex-shrink-0 relative z-10 group-hover:scale-110 transition-transform duration-200"></i>
+                <span class="font-semibold text-sm sidebar-text whitespace-nowrap relative z-10">Logout</span>
+                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-all duration-200 sidebar-text relative z-10">
+                    <i class="fas fa-arrow-right text-xs"></i>
+                </div>
             </a>
         </div>
     </nav>
+    
+    <!-- Help Section (Bottom) -->
+    <!-- <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-br from-blue-50/50 to-purple-50/50 border-t border-gray-200/50">
+        <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-4 text-white shadow-lg sidebar-text">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-question-circle text-lg"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold mb-1">Need Help?</p>
+                    <p class="text-xs opacity-90 mb-3">Get support from our team</p>
+                    <button class="w-full px-3 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-xs font-bold transition-all duration-200">
+                        Contact Support
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+    
+    <!-- Collapsed State Tooltip -->
+    <div id="sidebarTooltip" class="fixed hidden bg-gray-900 text-white px-3 py-2 rounded-lg text-sm shadow-xl z-50 pointer-events-none whitespace-nowrap">
+        <div class="tooltip-text"></div>
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
+    </div>
 </aside>
 
 <!-- Overlay for mobile -->
-<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden lg:hidden"></div>
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 hidden lg:hidden transition-all duration-300"></div>
+
+<style>
+    /* Sidebar States */
+    .sidebar-expanded {
+        width: 18rem; /* 288px - w-72 */
+    }
+    
+    .sidebar-collapsed {
+        width: 5.5rem; /* 88px */
+    }
+    
+    /* Mobile: Always show overlay toggle */
+    @media (max-width: 1023px) {
+        #sidebar {
+            transform: translateX(-100%);
+        }
+        
+        #sidebar.mobile-open {
+            transform: translateX(0);
+        }
+    }
+    
+    /* Desktop: Handle expanded/collapsed states */
+    @media (min-width: 1024px) {
+        #sidebar {
+            transform: translateX(0) !important;
+        }
+    }
+    
+    /* Hide text when collapsed */
+    .sidebar-collapsed .sidebar-text {
+        opacity: 0;
+        width: 0;
+        overflow: hidden;
+    }
+    
+    /* Active nav item styles with gradient */
+    .nav-item {
+        color: #6b7280;
+        position: relative;
+    }
+    
+    .nav-item:hover {
+        background-color: #f9fafb;
+        color: #111827;
+    }
+    
+    .nav-item.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .nav-item.active i {
+        color: white;
+    }
+    
+    .nav-item.active .sidebar-text {
+        color: white;
+    }
+    
+    /* Active indicator line */
+    .nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: white;
+        border-radius: 0 4px 4px 0;
+    }
+    
+    .nav-item[data-page="logout"]:not(.active):hover {
+        background-color: #fef2f2;
+    }
+    
+    /* Rotate collapse button icon */
+    .sidebar-collapsed #sidebarCollapseBtn i {
+        transform: rotate(180deg);
+    }
+    
+    /* Smooth transitions */
+    .sidebar-text {
+        transition: opacity 0.3s ease, width 0.3s ease;
+    }
+    
+    /* Center icons when collapsed */
+    .sidebar-collapsed .nav-item {
+        justify-content: center;
+    }
+    
+    /* Hide user profile text when collapsed */
+    .sidebar-collapsed .nav-item.active::before {
+        display: none;
+    }
+    
+    /* Tooltip styles */
+    #sidebarTooltip.show {
+        display: block;
+        animation: tooltipFadeIn 0.2s ease;
+    }
+    
+    @keyframes tooltipFadeIn {
+        from {
+            opacity: 0;
+            transform: translateX(-5px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    /* Custom scrollbar */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+        border-radius: 3px;
+    }
+    
+    .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    }
+    
+    /* Pulse animation for live indicators */
+    @keyframes pulse {
+        0%, 100% { 
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% { 
+            opacity: 0.5;
+            transform: scale(1.2);
+        }
+    }
+</style>
 
 <script>
+    // Sidebar elements
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarCollapseBtn = document.getElementById('sidebarCollapseBtn');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const sidebarTooltip = document.getElementById('sidebarTooltip');
+    const navItems = document.querySelectorAll('.nav-item');
     
-    // Toggle sidebar on mobile
+    // Get current page from URL
+    const currentPath = window.location.pathname;
+    
+    // Function to set active nav item
+    function setActiveNavItem() {
+        navItems.forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && currentPath.includes(href) && href !== '#') {
+                item.classList.add('active');
+            } else if (item.dataset.page) {
+                const pathSegments = currentPath.split('/').filter(Boolean);
+                if (pathSegments.includes(item.dataset.page)) {
+                    item.classList.add('active');
+                }
+            }
+        });
+        
+        // Special case: if on root or dashboard, activate dashboard
+        if (currentPath === '/' || currentPath === '/dashboard') {
+            document.querySelector('[data-page="dashboard"]')?.classList.add('active');
+        }
+    }
+    
+    // Initialize active state
+    setActiveNavItem();
+    
+    // Desktop collapse/expand functionality
+    if (sidebarCollapseBtn) {
+        // Load saved state from localStorage
+        const savedState = localStorage.getItem('sidebarState');
+        if (savedState === 'collapsed') {
+            sidebar.classList.remove('sidebar-expanded');
+            sidebar.classList.add('sidebar-collapsed');
+        }
+        
+        sidebarCollapseBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('sidebar-collapsed');
+            sidebar.classList.toggle('sidebar-expanded');
+            
+            // Save state
+            const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+            localStorage.setItem('sidebarState', isCollapsed ? 'collapsed' : 'expanded');
+            
+            // Hide tooltip when toggling
+            sidebarTooltip.classList.remove('show');
+        });
+    }
+    
+    // Mobile toggle functionality
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('mobile-open');
             sidebarOverlay.classList.toggle('hidden');
+            document.body.style.overflow = sidebar.classList.contains('mobile-open') ? 'hidden' : '';
         });
     }
     
-    // Close sidebar when clicking overlay
+    // Close sidebar when clicking overlay (mobile)
     if (sidebarOverlay) {
         sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('mobile-open');
             sidebarOverlay.classList.add('hidden');
+            document.body.style.overflow = '';
         });
     }
+    
+    // Tooltip functionality for collapsed sidebar
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', function(e) {
+            if (window.innerWidth >= 1024 && sidebar.classList.contains('sidebar-collapsed')) {
+                const text = item.querySelector('.sidebar-text')?.textContent.trim();
+                if (text) {
+                    const rect = item.getBoundingClientRect();
+                    sidebarTooltip.querySelector('.tooltip-text').textContent = text;
+                    sidebarTooltip.style.left = (rect.right + 12) + 'px';
+                    sidebarTooltip.style.top = (rect.top + rect.height / 2 - sidebarTooltip.offsetHeight / 2) + 'px';
+                    sidebarTooltip.classList.add('show');
+                }
+            }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            sidebarTooltip.classList.remove('show');
+        });
+    });
+    
+    // Hide tooltip when sidebar is expanded
+    sidebar.addEventListener('mouseenter', function() {
+        if (!sidebar.classList.contains('sidebar-collapsed')) {
+            sidebarTooltip.classList.remove('show');
+        }
+    });
+    
+    // Close mobile sidebar when clicking a nav item
+    navItems.forEach(item => {
+        item.addEventListener('click', function() {
+            if (window.innerWidth < 1024) {
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        });
+    });
+    
+    // Handle window resize
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (window.innerWidth >= 1024) {
+                // Desktop: remove mobile classes
+                sidebar.classList.remove('mobile-open');
+                sidebarOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            } else {
+                // Mobile: hide tooltip
+                sidebarTooltip.classList.remove('show');
+            }
+        }, 250);
+    });
+    
+    // Smooth scroll behavior for nav items
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            // Add ripple effect
+            const ripple = document.createElement('span');
+            ripple.style.position = 'absolute';
+            ripple.style.borderRadius = '50%';
+            ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            ripple.style.width = ripple.style.height = '100px';
+            ripple.style.left = e.clientX - this.offsetLeft - 50 + 'px';
+            ripple.style.top = e.clientY - this.offsetTop - 50 + 'px';
+            ripple.style.animation = 'ripple 0.6s ease-out';
+            ripple.style.pointerEvents = 'none';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+    
+    // Add ripple animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            from {
+                transform: scale(0);
+                opacity: 1;
+            }
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
 </script>

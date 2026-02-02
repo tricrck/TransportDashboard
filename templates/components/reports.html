@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 p-6">
+    
+    <!-- Page Header -->
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+        <div>
+            <span class="text-xs font-black text-blue-600 uppercase tracking-widest block mb-2">
+                Reporting & Intelligence
+            </span>
+            <h1 class="text-5xl font-black text-slate-900 tracking-tight mb-2">
+                Reports Center
+            </h1>
+            <p class="text-lg text-slate-600 font-medium">
+                Generate comprehensive reports and business intelligence insights
+            </p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <button class="px-6 py-3 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center gap-2">
+                <i class="fas fa-filter"></i>
+                Advanced Filters
+            </button>
+            <button class="px-6 py-3 bg-blue-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl hover:bg-blue-700 transition-all flex items-center gap-2">
+                <i class="fas fa-plus"></i>
+                Generate New Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-file-alt text-3xl opacity-80"></i>
+                <span class="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">This Month</span>
+            </div>
+            <h3 class="text-4xl font-black mb-1">247</h3>
+            <p class="text-sm opacity-90">Reports Generated</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-download text-3xl opacity-80"></i>
+                <span class="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">Total</span>
+            </div>
+            <h3 class="text-4xl font-black mb-1">1,842</h3>
+            <p class="text-sm opacity-90">Downloads</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-clock text-3xl opacity-80"></i>
+                <span class="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">Active</span>
+            </div>
+            <h3 class="text-4xl font-black mb-1">12</h3>
+            <p class="text-sm opacity-90">Scheduled Reports</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-white shadow-xl">
+            <div class="flex items-center justify-between mb-2">
+                <i class="fas fa-users text-3xl opacity-80"></i>
+                <span class="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">Shared</span>
+            </div>
+            <h3 class="text-4xl font-black mb-1">34</h3>
+            <p class="text-sm opacity-90">Team Members</p>
+        </div>
+    </div>
+
+    <!-- Report Categories -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Category Filters -->
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
+            <h3 class="text-lg font-black text-slate-900 mb-4">Report Categories</h3>
+            
+            <div class="space-y-2">
+                <button class="w-full text-left px-4 py-3 bg-blue-600 text-white rounded-xl font-bold flex items-center justify-between group">
+                    <span><i class="fas fa-chart-line mr-2"></i>Financial Reports</span>
+                    <span class="bg-white/20 px-2 py-1 rounded-full text-xs">18</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-users mr-2"></i>Passenger Reports</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">24</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-route mr-2"></i>Route Performance</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">15</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-truck mr-2"></i>Fleet Reports</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">12</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-calendar mr-2"></i>Compliance</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">8</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-cog mr-2"></i>Operational</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">21</span>
+                </button>
+
+                <button class="w-full text-left px-4 py-3 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition flex items-center justify-between group">
+                    <span><i class="fas fa-star mr-2"></i>Custom Reports</span>
+                    <span class="bg-slate-200 px-2 py-1 rounded-full text-xs">6</span>
+                </button>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-slate-200">
+                <h4 class="text-sm font-black text-slate-500 uppercase mb-3">Quick Actions</h4>
+                <button class="w-full px-4 py-2 bg-slate-900 text-white rounded-xl font-bold mb-2 hover:bg-slate-800 transition">
+                    <i class="fas fa-plus mr-2"></i>Create Custom Report
+                </button>
+                <button class="w-full px-4 py-2 border-2 border-slate-200 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition">
+                    <i class="fas fa-calendar-alt mr-2"></i>Schedule Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Reports List -->
+        <div class="lg:col-span-3 space-y-4">
+            
+            <!-- Search & Filter Bar -->
+            <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4">
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-1 relative">
+                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" 
+                               placeholder="Search reports..." 
+                               class="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                    </div>
+                    <select class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold">
+                        <option>All Time Periods</option>
+                        <option>Today</option>
+                        <option>This Week</option>
+                        <option>This Month</option>
+                        <option>This Quarter</option>
+                        <option>This Year</option>
+                        <option>Custom Range</option>
+                    </select>
+                    <select class="px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold">
+                        <option>All Formats</option>
+                        <option>PDF</option>
+                        <option>Excel</option>
+                        <option>CSV</option>
+                        <option>JSON</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Report Cards -->
+            <div class="space-y-4">
+                
+                <!-- Report 1 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all group">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center text-white flex-shrink-0">
+                                    <i class="fas fa-chart-line text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-900 group-hover:text-blue-600 transition">Monthly Revenue Summary</h3>
+                                    <p class="text-sm text-slate-600 mt-1">Comprehensive financial performance analysis for January 2026</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-bold">Financial</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-calendar mr-1"></i>Jan 1 - Jan 31, 2026</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-user mr-1"></i>Admin User</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-download text-slate-600"></i>
+                                </button>
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-share-alt text-slate-600"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-4 mb-4">
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Total Revenue</p>
+                                <p class="text-lg font-black text-slate-900">KSh 45.2M</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Transactions</p>
+                                <p class="text-lg font-black text-slate-900">12,847</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Avg. Value</p>
+                                <p class="text-lg font-black text-slate-900">KSh 3,520</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Growth</p>
+                                <p class="text-lg font-black text-emerald-600">+12.5%</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                                <span class="text-sm font-bold text-slate-600">PDF • 2.4 MB</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                                    View Report
+                                </button>
+                                <button class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report 2 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all group">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center text-white flex-shrink-0">
+                                    <i class="fas fa-users text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-900 group-hover:text-blue-600 transition">Passenger Demographics Analysis</h3>
+                                    <p class="text-sm text-slate-600 mt-1">Detailed breakdown of passenger profiles and travel patterns</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <span class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full font-bold">Passengers</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-calendar mr-1"></i>Last 30 Days</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-user mr-1"></i>Analytics Team</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-download text-slate-600"></i>
+                                </button>
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-share-alt text-slate-600"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-4 mb-4">
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Total Passengers</p>
+                                <p class="text-lg font-black text-slate-900">124,567</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">New Users</p>
+                                <p class="text-lg font-black text-slate-900">8,234</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Avg. Age</p>
+                                <p class="text-lg font-black text-slate-900">34 years</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Retention</p>
+                                <p class="text-lg font-black text-emerald-600">87.3%</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-excel text-emerald-600"></i>
+                                <span class="text-sm font-bold text-slate-600">Excel • 1.8 MB</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                                    View Report
+                                </button>
+                                <button class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Report 3 -->
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all group">
+                    <div class="p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-lg flex items-center justify-center text-white flex-shrink-0">
+                                    <i class="fas fa-route text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-black text-slate-900 group-hover:text-blue-600 transition">Route Optimization Report</h3>
+                                    <p class="text-sm text-slate-600 mt-1">Performance metrics and optimization recommendations for all routes</p>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full font-bold">Operations</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-calendar mr-1"></i>Q4 2025</span>
+                                        <span class="text-xs text-slate-500"><i class="fas fa-user mr-1"></i>Operations Manager</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-download text-slate-600"></i>
+                                </button>
+                                <button class="w-10 h-10 bg-slate-100 hover:bg-blue-100 rounded-xl flex items-center justify-center transition">
+                                    <i class="fas fa-share-alt text-slate-600"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-4 mb-4">
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Routes Analyzed</p>
+                                <p class="text-lg font-black text-slate-900">1,247</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Efficiency Gain</p>
+                                <p class="text-lg font-black text-slate-900">+18.4%</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Cost Savings</p>
+                                <p class="text-lg font-black text-slate-900">KSh 2.1M</p>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-3">
+                                <p class="text-xs text-slate-500 font-bold uppercase mb-1">Score</p>
+                                <p class="text-lg font-black text-emerald-600">94.8%</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-file-pdf text-red-500"></i>
+                                <span class="text-sm font-bold text-slate-600">PDF • 4.2 MB</span>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition">
+                                    View Report
+                                </button>
+                                <button class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition">
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scheduled Reports Section -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-xl overflow-hidden text-white p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-black mb-1">Scheduled Reports</h3>
+                            <p class="text-slate-300">Automated report generation and delivery</p>
+                        </div>
+                        <button class="px-4 py-2 bg-white text-slate-900 rounded-xl font-bold hover:bg-slate-100 transition">
+                            <i class="fas fa-plus mr-2"></i>Add Schedule
+                        </button>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-white/10 backdrop-blur rounded-xl p-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-calendar-week text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Weekly Performance Summary</p>
+                                    <p class="text-sm text-slate-300">Every Monday at 9:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs bg-emerald-500 px-3 py-1 rounded-full font-bold">Active</span>
+                                <button class="w-8 h-8 hover:bg-white/10 rounded-lg flex items-center justify-center transition">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur rounded-xl p-4 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-calendar-alt text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold">Monthly Financial Report</p>
+                                    <p class="text-sm text-slate-300">1st of every month at 8:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs bg-emerald-500 px-3 py-1 rounded-full font-bold">Active</span>
+                                <button class="w-8 h-8 hover:bg-white/10 rounded-lg flex items-center justify-center transition">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- API Integration Notes -->
+<!-- 
+Flask Route Examples:
+@app.route('/reports')
+def reports_index():
+    # List all reports with filtering
+    
+@app.route('/reports/generate', methods=['POST'])
+def generate_report():
+    # Generate new report based on parameters
+    
+@app.route('/reports/<id>/download')
+def download_report(id):
+    # Download specific report file
+    
+@app.route('/reports/schedule', methods=['POST'])
+def schedule_report():
+    # Create scheduled report
+-->
+{% endblock %}

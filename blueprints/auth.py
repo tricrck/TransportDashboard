@@ -452,3 +452,23 @@ def reject_user(user_id):
         flash('An error occurred while rejecting the user.', 'error')
     
     return redirect(request.referrer or url_for('admin.users'))
+
+@auth_bp.route('/settings')
+@login_required
+def settings():
+    """User settings and preferences page"""
+    return render_template('components/settings.html')
+
+# Settings update endpoint
+@auth_bp.route('/settings/update', methods=['POST'])
+@login_required
+def update_settings():
+    """Handle settings form submission"""
+    # TODO: Process form data and update database
+    data = request.get_json()
+    
+    # Example: Update user profile
+    # current_user.full_name = data.get('full_name')
+    # db.session.commit()
+    
+    return jsonify({'success': True, 'message': 'Settings updated successfully'})
